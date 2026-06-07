@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Support Center | Contact, FAQ, Help & Support</title>
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=DM+Sans:wght@300;400;500;600&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* ── RESET & BASE (SAME AS MAIN SITE) ─────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --ink:    #0A0A0F;
+  --paper:  #F5F3EE;
+  --cream:  #EDE9E0;
+  --accent: #C8A96E;
+  --blue:   #1B4FBE;
+  --muted:  #7A7570;
+  --border: rgba(10,10,15,.1);
+  --serif:  'Playfair Display', serif;
+  --sans:   'DM Sans', sans-serif;
+  --bn:     'Hind Siliguri', sans-serif;
+  --radius: 16px;
+}
+
+body {
+  font-family: var(--sans);
+  background: var(--paper);
+  color: var(--ink);
+  overflow-x: hidden;
+  opacity: 1;
+}
+
+/* ── MINI RESET for page consistency ── */
+a { text-decoration: none; color: inherit; }
+button { cursor: pointer; font-family: inherit; }
+
+/* ── PAGE SPECIFIC HEADER ───────────────────────────────── */
+.support-header {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 6rem 2rem 4rem;
+  text-align: center;
+}
+.support-header h1 {
+  font-family: var(--serif);
+  font-size: clamp(2.2rem, 5vw, 3.5rem);
+  font-weight: 800;
+  margin-bottom: 1rem;
+}
+.support-header p {
+  font-family: var(--bn);
+  font-size: 1rem;
+  color: rgba(255,255,255,0.65);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* ── FOUR SECTIONS GRID (Contact, FAQ, Help, Support) ───────── */
+.sections-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 4rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+}
+
+/* section card style */
+.section-card {
+  background: #fff;
+  border-radius: 28px;
+  border: 1px solid var(--border);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.02);
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+}
+.section-card:hover {
+  box-shadow: 0 16px 40px rgba(10,10,15,0.08);
+}
+.section-title {
+  background: var(--cream);
+  padding: 1.2rem 2rem;
+  border-bottom: 1px solid var(--border);
+}
+.section-title h2 {
+  font-family: var(--serif);
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.section-title h2 span {
+  font-size: 1.9rem;
+}
+.section-content {
+  padding: 2rem;
+}
+
+/* ── CONTACT SECTION (GRID: form + info) ────────────────────── */
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2.5rem;
+}
+.contact-form .form-row {
+  margin-bottom: 1.2rem;
+}
+.contact-form label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--muted);
+  margin-bottom: 0.4rem;
+}
+.contact-form input,
+.contact-form textarea {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  font-family: var(--bn);
+  background: var(--paper);
+  transition: border 0.2s;
+  font-size: 0.9rem;
+}
+.contact-form input:focus,
+.contact-form textarea:focus {
+  outline: none;
+  border-color: var(--blue);
+  background: white;
+}
+.contact-form button {
+  background: var(--ink);
+  color: white;
+  border: none;
+  padding: 0.85rem 1.8rem;
+  border-radius: 40px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: background 0.2s, transform 0.1s;
+}
+.contact-form button:hover {
+  background: var(--blue);
+  transform: translateY(-2px);
+}
+.contact-info {
+  background: var(--paper);
+  border-radius: 20px;
+  padding: 1.5rem;
+}
+.contact-info h3 {
+  font-family: var(--serif);
+  font-weight: 700;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+}
+.contact-details {
+  list-style: none;
+  margin-top: 1rem;
+}
+.contact-details li {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 1.2rem;
+  font-family: var(--bn);
+  color: var(--ink);
+  font-size: 0.9rem;
+}
+.contact-icon {
+  width: 36px;
+  height: 36px;
+  background: var(--cream);
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--blue);
+}
+.social-links {
+  display: flex;
+  gap: 0.8rem;
+  margin-top: 1.5rem;
+}
+.social-circle {
+  width: 40px;
+  height: 40px;
+  background: var(--cream);
+  border-radius: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+.social-circle:hover {
+  background: var(--blue);
+  color: white;
+  transform: translateY(-3px);
+}
+
+/* ── FAQ SECTION (ACCORDION) ─────────────────────────────────── */
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.faq-item {
+  background: var(--paper);
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+.faq-question {
+  width: 100%;
+  text-align: left;
+  padding: 1rem 1.5rem;
+  background: transparent;
+  border: none;
+  font-weight: 700;
+  font-family: var(--bn);
+  font-size: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.faq-question:hover {
+  background: rgba(200,169,110,0.1);
+}
+.faq-question .faq-icon {
+  font-size: 1.4rem;
+  font-weight: 400;
+  color: var(--accent);
+  transition: transform 0.25s;
+}
+.faq-item.open .faq-icon {
+  transform: rotate(45deg);
+}
+.faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease-out;
+  background: #fff;
+  border-top: 1px solid transparent;
+}
+.faq-item.open .faq-answer {
+  max-height: 300px;
+  border-top-color: var(--border);
+}
+.faq-answer p {
+  padding: 1rem 1.5rem;
+  font-family: var(--bn);
+  font-size: 0.9rem;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+/* ── HELP CENTER (CATEGORIES & ARTICLES) ────────────────────── */
+.help-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+}
+.help-card {
+  background: var(--paper);
+  border-radius: 20px;
+  padding: 1.5rem;
+  transition: transform 0.2s, border-color 0.2s;
+  border: 1px solid rgba(0,0,0,0.02);
+}
+.help-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--accent);
+}
+.help-card .help-icon {
+  font-size: 2rem;
+  margin-bottom: 0.8rem;
+}
+.help-card h4 {
+  font-family: var(--serif);
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+}
+.help-card p {
+  font-size: 0.8rem;
+  font-family: var(--bn);
+  color: var(--muted);
+  margin-bottom: 1rem;
+}
+.help-link {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--blue);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+/* ── SUPPORT TICKET SECTION ──────────────────────────────────── */
+.support-ticket {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+.ticket-row {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.ticket-input {
+  flex: 1;
+}
+.ticket-input input,
+.ticket-input select,
+.ticket-input textarea {
+  width: 100%;
+  padding: 0.8rem;
+  border-radius: 14px;
+  border: 1.5px solid var(--border);
+  background: var(--paper);
+  font-family: var(--bn);
+}
+.ticket-input label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--muted);
+  display: block;
+  margin-bottom: 0.4rem;
+}
+.ticket-submit {
+  background: var(--ink);
+  color: white;
+  border: none;
+  padding: 0.85rem 2rem;
+  border-radius: 40px;
+  font-weight: bold;
+  align-self: flex-start;
+}
+.ticket-submit:hover {
+  background: var(--blue);
+}
+.success-msg {
+  background: #e6ffed;
+  color: #0a5c2e;
+  padding: 0.8rem;
+  border-radius: 12px;
+  margin-top: 1rem;
+  display: none;
+  font-family: var(--bn);
+}
+.support-note {
+  background: #fff7e5;
+  border-left: 4px solid var(--accent);
+  padding: 1rem;
+  border-radius: 14px;
+  font-family: var(--bn);
+  font-size: 0.85rem;
+  color: #7a6100;
+}
+
+/* ── FOOTER (same style as main site, compact) ───────────────── */
+.site-footer {
+  background: var(--ink);
+  color: var(--paper);
+  margin-top: 3rem;
+}
+.sf-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 3rem 2rem 1rem;
+}
+.sf-bottom {
+  border-top: 1px solid rgba(255,255,255,.08);
+  padding: 1.4rem 0;
+  text-align: center;
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.35);
+}
+.sf-codemyst {
+  color: var(--accent);
+  text-decoration: none;
+}
+.sf-heart {
+  color: #e74c3c;
+  display: inline-block;
+}
+
+@media (max-width: 780px) {
+  .sections-container { padding: 2rem 1rem; }
+  .contact-grid { grid-template-columns: 1fr; }
+  .section-title h2 { font-size: 1.4rem; }
+  .support-header { padding: 4rem 1rem; }
+}
+@media (max-width: 480px) {
+  .section-content { padding: 1.2rem; }
+  .help-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- MAIN 4-IN-1 PAGE: Contact Us, FAQ, Help Center, Support -->
+<div class="support-header">
+  <h1>কিভাবে আমরা সাহায্য করতে পারি?</h1>
+  <p>আপনার যেকোনো প্রশ্ন, অভিযোগ বা পরামর্শের জন্য আমরা এখানে আছি। নিচের চারটি সেকশন থেকে আপনার প্রয়োজনীয় সহায়তা নিন।</p>
+</div>
+
+<div class="sections-container">
+  <!-- SECTION 1: CONTACT US -->
+  <div class="section-card" id="contact-us">
+    <div class="section-title">
+      <h2><span>📞</span> যোগাযোগ করুন (Contact Us)</h2>
+    </div>
+    <div class="section-content">
+      <div class="contact-grid">
+        <div class="contact-form">
+          <form id="contactForm">
+            <div class="form-row">
+              <label>আপনার নাম</label>
+              <input type="text" id="contactName" placeholder="পূর্ণ নাম" required>
+            </div>
+            <div class="form-row">
+              <label>ইমেইল ঠিকানা</label>
+              <input type="email" id="contactEmail" placeholder="example@domain.com" required>
+            </div>
+            <div class="form-row">
+              <label>বার্তার বিষয়</label>
+              <input type="text" id="contactSubject" placeholder="বিষয় লিখুন">
+            </div>
+            <div class="form-row">
+              <label>বার্তা</label>
+              <textarea rows="3" id="contactMsg" placeholder="আপনার বার্তা লিখুন..." required></textarea>
+            </div>
+            <button type="submit" id="sendContactBtn">বার্তা পাঠান →</button>
+            <div id="contactFormMsg" style="margin-top: 12px; font-size: 0.8rem; font-family: var(--bn);"></div>
+          </form>
+        </div>
+        <div class="contact-info">
+          <h3>📌 সরাসরি যোগাযোগ</h3>
+          <ul class="contact-details">
+            <li><span class="contact-icon">📍</span> ঢাকা, বাংলাদেশ (হেড অফিস)</li>
+            <li><span class="contact-icon">📧</span> support@lmsplatform.com</li>
+            <li><span class="contact-icon">📞</span> +880 1234-567890</li>
+            <li><span class="contact-icon">🕒</span> শনি – বৃহস্পতি: সকাল ৯টা – সন্ধ্যা ৬টা</li>
+          </ul>
+          <div class="social-links">
+            <a href="#" class="social-circle">📘</a>
+            <a href="#" class="social-circle">🐦</a>
+            <a href="#" class="social-circle">📸</a>
+            <a href="#" class="social-circle">💼</a>
+          </div>
+          <p style="margin-top: 1rem; font-size: 0.7rem; color: var(--muted);">২৪ ঘণ্টার মধ্যে রিপ্লাই দেওয়া হবে ইনশাআল্লাহ।</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 2: FAQ (Frequently Asked Questions) -->
+  <div class="section-card" id="faq-section">
+    <div class="section-title">
+      <h2><span>❓</span> প্রায়শই জিজ্ঞাসিত প্রশ্ন (FAQ)</h2>
+    </div>
+    <div class="section-content">
+      <div class="faq-list">
+        <div class="faq-item">
+          <button class="faq-question">কিভাবে একটি কোর্সে ভর্তি হতে পারি? <span class="faq-icon">+</span></button>
+          <div class="faq-answer"><p>প্রথমে আমাদের প্ল্যাটফর্মে একটি একাউন্ট তৈরি করুন, তারপর 'কোর্স' সেকশন থেকে আপনার পছন্দের কোর্সটি নির্বাচন করে 'এনরোল করুন' বাটনে ক্লিক করুন। ফ্রি কোর্সে সঙ্গে সঙ্গে এনরোল সুবিধা পাবেন, আর পেইড কোর্সের জন্য পেমেন্ট সম্পন্ন করতে হবে।</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question">কোর্স ফি কি রিফান্ডযোগ্য? <span class="faq-icon">+</span></button>
+          <div class="faq-answer"><p>আমাদের রিফান্ড পলিসি অনুযায়ী, কোর্স শুরুর ৭ দিনের মধ্যে যদি কোনো টেকনিক্যাল সমস্যার জন্য কন্টেন্ট অ্যাক্সেস না করেন, তাহলে রিফান্ড আবেদন করতে পারবেন। তবে নির্দিষ্ট কিছু কোর্সের ক্ষেত্রে নীতি ভিন্ন হতে পারে — দয়া করে টার্মস এন্ড কন্ডিশন দেখুন।</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question">কিভাবে লাইভ ক্লাসে জয়েন করব? <span class="faq-icon">+</span></button>
+          <div class="faq-answer"><p>আমাদের ড্যাশবোর্ডে “লাইভ সেশন” অপশন থেকে জুম বা গুগল মিট লিংক পাবেন। সেশন শুরুর ১৫ মিনিট আগে নোটিফিকেশন আসবে।</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question">সার্টিফিকেট কিভাবে পাবো? <span class="faq-icon">+</span></button>
+          <div class="faq-answer"><p>কোর্স সম্পূর্ণ করার পর প্রতিটি লেসন ও কুইজ শেষ করলেই ড্যাশবোর্ড থেকে আপনার সার্টিফিকেট ডাউনলোড করতে পারবেন। এছাড়া ইমেইলেও কপি পাঠানো হবে।</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question">মোবাইল অ্যাপ কি আছে? <span class="faq-icon">+</span></button>
+          <div class="faq-answer"><p>হ্যাঁ, আমরা Android এবং iOS অ্যাপ শীঘ্রই লঞ্চ করেছি। হোম পেজে 'অ্যাপ ডাউনলোড করুন' বাটনে ক্লিক করে PWA ভার্সন ইনস্টল করতে পারেন।</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 3: HELP CENTER (guides & self-help) -->
+  <div class="section-card" id="help-center">
+    <div class="section-title">
+      <h2><span>🛟</span> সাহায্য কেন্দ্র (Help Center)</h2>
+    </div>
+    <div class="section-content">
+      <div class="help-grid">
+        <div class="help-card">
+          <div class="help-icon">📘</div>
+          <h4>স্টুডেন্ট গাইড</h4>
+          <p>অ্যাকাউন্ট তৈরি, লগইন ও কোর্স এনরোলমেন্ট সম্পর্কে ধাপে ধাপে নির্দেশনা</p>
+          <a href="#" class="help-link">বিস্তারিত →</a>
+        </div>
+        <div class="help-card">
+          <div class="help-icon">💳</div>
+          <h4>পেমেন্ট ও বিলিং</h4>
+          <p>SSLCommerz, বিকাশ, নগদ পেমেন্ট পদ্ধতি এবং রসিদ ডাউনলোড সংক্রান্ত সাহায্য</p>
+          <a href="#" class="help-link">পেমেন্ট গাইড →</a>
+        </div>
+        <div class="help-card">
+          <div class="help-icon">⚙️</div>
+          <h4>টেকনিক্যাল সহায়তা</h4>
+          <p>ভিডিও প্লেয়ার, ইন্টারনেট ইস্যু, লগইন সমস্যার সমাধান</p>
+          <a href="#" class="help-link">সমাধান দেখুন →</a>
+        </div>
+        <div class="help-card">
+          <div class="help-icon">🎓</div>
+          <h4>ইন্সট্রাক্টর গাইড</h4>
+          <p>শিক্ষকদের জন্য কোর্স ক্রিয়েশন, লাইভ ক্লাস ও শিক্ষার্থী ব্যবস্থাপনা</p>
+          <a href="#" class="help-link">ইন্সট্রাক্টর পোর্টাল →</a>
+        </div>
+      </div>
+      <div style="margin-top: 1.5rem; background: var(--cream); border-radius: 18px; padding: 1rem; text-align: center; font-family: var(--bn);">
+        🔍 <strong>দ্রুত সাহায্য?</strong> আমাদের চ্যাটবট ব্যবহার করুন অথবা নিচে টিকেট সাবমিট করুন।
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 4: SUPPORT (Ticket System + urgent help) -->
+  <div class="section-card" id="support">
+    <div class="section-title">
+      <h2><span>🎫</span> সাপোর্ট টিকেট (Support Request)</h2>
+    </div>
+    <div class="section-content">
+      <div class="support-ticket">
+        <div class="support-note">
+          ✨ জরুরি প্রয়োজনে সরাসরি কল করুন: <strong>+880 1877-223344</strong> (সাপোর্ট হটলাইন, সকাল ৯টা-রাত ৮টা)
+        </div>
+        <form id="ticketForm">
+          <div class="ticket-row">
+            <div class="ticket-input">
+              <label>আপনার নাম *</label>
+              <input type="text" id="ticketName" placeholder="পূর্ণ নাম" required>
+            </div>
+            <div class="ticket-input">
+              <label>ইমেইল *</label>
+              <input type="email" id="ticketEmail" placeholder="ইমেইল ঠিকানা" required>
+            </div>
+          </div>
+          <div class="ticket-row">
+            <div class="ticket-input">
+              <label>বিষয় নির্বাচন করুন</label>
+              <select id="ticketType">
+                <option value="টেকনিক্যাল ইস্যু">টেকনিক্যাল ইস্যু (ভিডিও/লগইন)</option>
+                <option value="পেমেন্ট সংক্রান্ত">পেমেন্ট সংক্রান্ত</option>
+                <option value="কোর্স রিলেটেড">কোর্স রিলেটেড প্রশ্ন</option>
+                <option value="অন্যান্য">অন্যান্য</option>
+              </select>
+            </div>
+            <div class="ticket-input">
+              <label>রেফারেন্স আইডি (যদি থাকে)</label>
+              <input type="text" id="ticketRef" placeholder="অর্ডার/ইনভয়েস নং">
+            </div>
+          </div>
+          <div class="ticket-row">
+            <div class="ticket-input">
+              <label>বিস্তারিত বর্ণনা করুন *</label>
+              <textarea rows="3" id="ticketDesc" placeholder="আপনার সমস্যা বা প্রশ্ন বিস্তারিত লিখুন..." required></textarea>
+            </div>
+          </div>
+          <button type="submit" class="ticket-submit">টিকেট জমা দিন →</button>
+          <div id="ticketSuccessMsg" class="success-msg"></div>
+        </form>
+        <p style="font-size: 0.7rem; color: var(--muted); margin-top: 0.5rem;">আমরা ২৪ ঘন্টার মধ্যে আপনার টিকেটের রেসপন্স দেবো। ধন্যবাদ।</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER (similar style, with navigation, copyright) -->
+<footer class="site-footer">
+  <div class="sf-inner">
+    <div class="sf-bottom">
+      <p class="sf-copy">© 2026 LMS Platform. All rights reserved. — Made with <span class="sf-heart">♥</span> by <a href="#" class="sf-codemyst">CODEMYST</a> in Bangladesh 🇧🇩</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ── ACCORDION (FAQ) ─────────────────────────────────────────
+  document.querySelectorAll('.faq-question').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item = btn.closest('.faq-item');
+      item.classList.toggle('open');
+      // Optional: close others
+      // document.querySelectorAll('.faq-item').forEach(i => { if(i !== item) i.classList.remove('open'); });
+    });
+  });
+
+  // ── CONTACT FORM HANDLER (simulate Firestore or just alert) ──
+  const contactForm = document.getElementById('contactForm');
+  const contactMsgDiv = document.getElementById('contactFormMsg');
+
+  contactForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const name = document.getElementById('contactName').value.trim();
+    const email = document.getElementById('contactEmail').value.trim();
+    const subject = document.getElementById('contactSubject').value.trim();
+    const message = document.getElementById('contactMsg').value.trim();
+    if(!name || !email || !message) {
+      contactMsgDiv.innerHTML = '<span style="color:#dc2626;">❌ অনুগ্রহ করে সব প্রয়োজনীয় তথ্য পূরণ করুন।</span>';
+      return;
+    }
+    // Simulate sending (demo - could integrate email service)
+    contactMsgDiv.innerHTML = '<span style="color:#16a34a;">✓ আপনার বার্তা সফলভাবে প্রেরিত হয়েছে। শীঘ্রই যোগাযোগ করা হবে।</span>';
+    contactForm.reset();
+    setTimeout(() => {
+      contactMsgDiv.innerHTML = '';
+    }, 4000);
+  });
+
+  // ── SUPPORT TICKET HANDLER ──────────────────────────────────
+  const ticketForm = document.getElementById('ticketForm');
+  const ticketSuccess = document.getElementById('ticketSuccessMsg');
+  ticketForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const name = document.getElementById('ticketName').value.trim();
+    const email = document.getElementById('ticketEmail').value.trim();
+    const desc = document.getElementById('ticketDesc').value.trim();
+    if(!name || !email || !desc) {
+      ticketSuccess.style.display = 'block';
+      ticketSuccess.style.background = '#fee2e2';
+      ticketSuccess.style.color = '#b91c1c';
+      ticketSuccess.innerHTML = '⚠️ সব ফিল্ড পূরণ করা আবশ্যক!';
+      setTimeout(() => ticketSuccess.style.display = 'none', 3000);
+      return;
+    }
+    ticketSuccess.style.display = 'block';
+    ticketSuccess.style.background = '#e6ffed';
+    ticketSuccess.style.color = '#0a5c2e';
+    ticketSuccess.innerHTML = '✅ টিকেট জমা হয়েছে! আমাদের সাপোর্ট টিম শীঘ্রই আপনার সাথে যোগাযোগ করবে। টিকেট ID: #' + Math.floor(Math.random()*90000+10000);
+    ticketForm.reset();
+    setTimeout(() => ticketSuccess.style.display = 'none', 5000);
+  });
+
+  // ── simple smooth scroll for anchor (optional) ──────────────
+  document.querySelectorAll('.help-link, .social-circle').forEach(link => {
+    link.addEventListener('click', (e) => {
+      if(link.getAttribute('href') === '#') e.preventDefault();
+    });
+  });
+  // help center card links click dummy prevention
+  document.querySelectorAll('.help-card a').forEach(a => {
+    a.addEventListener('click', (e) => {
+      e.preventDefault();
+      alert('🚧 শীঘ্রই এই গাইড পেজ সম্পূর্ণ হবে। আপাতত আমাদের সাপোর্ট টিকেট ব্যবহার করুন।');
+    });
+  });
+</script>
+</body>
+</html>
