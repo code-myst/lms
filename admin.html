@@ -781,6 +781,10 @@ tbody tr:hover td { background: rgba(255,255,255,.02); }
       <span class="ico">⭐</span>Reviews
       <span class="sb-count" id="reviewCount" style="display:none">0</span>
     </button>
+    <button class="sb-btn" data-p="certificates" onclick="go('certificates',this)">
+      <span class="ico">🎓</span>Certificates
+      <span class="sb-count" id="certCount" style="display:none">0</span>
+    </button>
     <button class="sb-btn" data-p="students" onclick="go('students',this)">
       <span class="ico">👥</span>শিক্ষার্থী
       <span class="sb-count" id="studentCount" style="display:none">0</span>
@@ -981,6 +985,54 @@ tbody tr:hover td { background: rgba(255,255,255,.02); }
     <div id="reviewsList" style="display:flex;flex-direction:column;gap:.7rem">
       <div class="sk" style="height:60px;border-radius:10px"></div>
       <div class="sk" style="height:60px;border-radius:10px"></div>
+    </div>
+  </div>
+
+  <!-- ─────────────── CERTIFICATES ─────────────── -->
+  <div class="page" id="page-certificates">
+    <div class="ph">
+      <div class="ph-left">
+        <h1>🎓 Certificates</h1>
+        <p>ইস্যু করা সার্টিফিকেটের তালিকা ও ম্যানেজমেন্ট</p>
+      </div>
+    </div>
+
+    <!-- stats -->
+    <div class="pay-stat-row" style="margin-bottom:1.5rem">
+      <div class="sc a" data-icon="🎓"><div class="sc-label">মোট Cert</div><div class="sc-val" id="csTotal">—</div><div class="sc-sub">সব কোর্স মিলিয়ে</div></div>
+      <div class="sc b" data-icon="📚"><div class="sc-label">Unique Courses</div><div class="sc-val" id="csUniqCourses">—</div><div class="sc-sub">সার্টিফিকেট পেয়েছে</div></div>
+      <div class="sc c" data-icon="👤"><div class="sc-label">Unique Students</div><div class="sc-val" id="csUniqStudents">—</div><div class="sc-sub">সার্টিফিকেট পেয়েছে</div></div>
+    </div>
+
+    <!-- filter -->
+    <div style="display:flex; gap:.6rem; flex-wrap:wrap; margin-bottom:1.2rem; align-items:flex-end">
+      <div class="fg" style="margin:0; min-width:200px">
+        <label>কোর্স অনুযায়ী ফিল্টার</label>
+        <select id="certCourseFilter" onchange="filterCerts()">
+          <option value="all">সব কোর্স</option>
+        </select>
+      </div>
+      <div class="fg" style="margin:0; min-width:200px">
+        <label>Student খুঁজুন</label>
+        <input type="search" id="certSearch" placeholder="নাম দিয়ে খুঁজুন..." oninput="filterCerts()"/>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Student</th>
+            <th>কোর্স</th>
+            <th>Certificate ID</th>
+            <th>ইস্যু তারিখ</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="certsTable">
+          <tr><td colspan="5"><div class="sk" style="height:40px"></div></td></tr>
+        </tbody>
+      </table>
     </div>
   </div>
 
@@ -1218,6 +1270,7 @@ let allCourses   = [];
 let allStudents  = [];
 let allPayments  = [];
 let allReviews   = [];
+let allCerts     = [];
 let statsFields  = [];
 let payMethodFields = [];
 let settingsData = {};
@@ -1291,12 +1344,13 @@ async function loadSettings() {
 
 /* ── Load All Data ─────────────────────── */
 async function loadAll() {
-  const [cSnap, sSnap, nSnap, pSnap, rSnap] = await Promise.all([
+  const [cSnap, sSnap, nSnap, pSnap, rSnap, certSnap] = await Promise.all([
     db.collection('courses').orderBy('createdAt','desc').get(),
     db.collection('users').get(),
     db.collection('notices').orderBy('date','desc').get(),
     db.collection('payments').orderBy('submittedAt','desc').get(),
-    db.collection('ratings').orderBy('createdAt','desc').get()
+    db.collection('ratings').orderBy('createdAt','desc').get(),
+    db.collection('certificates').orderBy('issuedAt','desc').get()
   ]);
 
   /* courses */
@@ -1333,6 +1387,10 @@ async function loadAll() {
   allReviews = [];
   rSnap.forEach(doc => allReviews.push({ id: doc.id, ...doc.data() }));
 
+  /* certificates */
+  allCerts = [];
+  certSnap.forEach(doc => allCerts.push({ id: doc.id, ...doc.data() }));
+
   /* ── stats ── */
   document.getElementById('dsCourses').textContent  = allCourses.filter(c=>c.published).length;
   document.getElementById('dsStudents').textContent = allStudents.length;
@@ -1349,12 +1407,16 @@ async function loadAll() {
   const rc = document.getElementById('reviewCount');
   rc.textContent = allReviews.length; rc.style.display = allReviews.length ? 'inline' : 'none';
 
+  const cc = document.getElementById('certCount');
+  cc.textContent = allCerts.length; cc.style.display = allCerts.length ? 'inline' : 'none';
+
   renderCoursesTable();
   renderStudents(allStudents.slice(0, 5), 'recentStudents', true);
   renderStudents(allStudents, 'studentsTable', false);
   renderNotices(notices);
   renderPayments(allPayments);
   renderReviewsPage(allReviews);
+  renderCertificates(allCerts);
 }
 
 /* ── Courses Table ─────────────────────── */
@@ -2327,6 +2389,74 @@ async function deleteReview(reviewId, courseId) {
   }
 }
 
+/* ── Certificates ──────────────────────── */
+function renderCertificates(certs) {
+  const uniqCourses  = new Set(certs.map(c => c.courseId)).size;
+  const uniqStudents = new Set(certs.map(c => c.userId)).size;
+  document.getElementById('csTotal').textContent       = certs.length;
+  document.getElementById('csUniqCourses').textContent = uniqCourses;
+  document.getElementById('csUniqStudents').textContent = uniqStudents;
+
+  // populate course filter
+  const sel  = document.getElementById('certCourseFilter');
+  const prev = sel.value;
+  sel.innerHTML = '<option value="all">সব কোর্স</option>' +
+    allCourses.map(c => `<option value="${c.id}">${c.title}</option>`).join('');
+  if (prev) sel.value = prev;
+
+  renderCertRows(certs);
+}
+
+function filterCerts() {
+  const courseId = document.getElementById('certCourseFilter').value;
+  const query    = document.getElementById('certSearch').value.trim().toLowerCase();
+  let filtered   = courseId === 'all' ? allCerts : allCerts.filter(c => c.courseId === courseId);
+  if (query) filtered = filtered.filter(c => (c.userName || '').toLowerCase().includes(query));
+  renderCertRows(filtered);
+}
+
+function renderCertRows(certs) {
+  const tbody = document.getElementById('certsTable');
+  if (!certs.length) {
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--muted)">কোনো সার্টিফিকেট নেই</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = certs.map(c => {
+    const date = c.issuedAt?.toDate?.().toLocaleDateString('bn-BD', {
+      year:'numeric', month:'short', day:'numeric'
+    }) || '—';
+    const verifyUrl = `certificate.html?id=${c.certId || c.id}`;
+    return `
+    <tr>
+      <td data-label="Student">
+        <div style="font-weight:600;font-size:.88rem">${c.userName || '—'}</div>
+      </td>
+      <td data-label="কোর্স" style="font-size:.82rem;max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.courseTitle || '—'}</td>
+      <td data-label="Certificate ID">
+        <span style="font-family:monospace;font-size:.75rem;color:var(--cyan)">${c.certId || c.id}</span>
+      </td>
+      <td data-label="ইস্যু তারিখ" style="color:var(--muted);font-size:.78rem">${date}</td>
+      <td data-label="Action">
+        <div style="display:flex;gap:.35rem;flex-wrap:wrap">
+          <a href="${verifyUrl}" target="_blank" class="btn btn-ghost btn-sm">🔗 Verify</a>
+          <button class="btn btn-rose btn-sm" onclick="revokeCert('${c.id}','${(c.userName||'').replace(/'/g,"\\'")}')">🗑 Revoke</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+async function revokeCert(certId, userName) {
+  if (!confirm(`"${userName}" এর সার্টিফিকেট বাতিল করবেন? এটি আর যাচাই হবে না।`)) return;
+  try {
+    await db.collection('certificates').doc(certId).delete();
+    toast('✅ সার্টিফিকেট বাতিল করা হয়েছে।', 'ok');
+    await loadAll();
+  } catch(e) {
+    toast('❌ সমস্যা হয়েছে: ' + e.message, 'err');
+  }
+}
+
 /* ── Make Admin ────────────────────────── */
 async function makeAdmin(uid) {
   if (!confirm('এই শিক্ষার্থীকে Admin করবেন? তিনি Admin Panel দেখতে পাবেন।')) return;
@@ -2339,7 +2469,8 @@ async function makeAdmin(uid) {
 const pageTitles = {
   dashboard:'Dashboard', courses:'কোর্স ম্যানেজমেন্ট',
   notices:'নোটিশ বোর্ড', students:'শিক্ষার্থী',
-  payments:'Payments', reviews:'Reviews', settings:'Site Settings'
+  payments:'Payments', reviews:'Reviews',
+  certificates:'Certificates', settings:'Site Settings'
 };
 function go(name, el) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));

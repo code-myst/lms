@@ -659,7 +659,6 @@ async function saveProgress(){
   try{
     await db.collection('userProgress').doc(currentUser.uid).collection('courses').doc(courseId)
       .set({completedLessons:Array.from(completedSet),progress:pct,lastUpdated:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});
-    await db.collection('courses').doc(courseId).set({progress:{[currentUser.uid]:pct}},{merge:true});
   }catch(e){console.warn('save failed:',e);}
 }
 
