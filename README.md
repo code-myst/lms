@@ -48,7 +48,6 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-
     // ── Helper functions ──────────────────────────
     function isLoggedIn() {
       return request.auth != null;
@@ -60,7 +59,6 @@ service cloud.firestore {
       return isLoggedIn() &&
         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
-
     // ── users collection ──────────────────────────
     match /users/{uid} {
       allow read:   if isLoggedIn() && (isOwner(uid) || isAdmin());
@@ -68,7 +66,6 @@ service cloud.firestore {
       allow update: if isLoggedIn() && (isOwner(uid) || isAdmin());
       allow delete: if isAdmin();
     }
-
     // ── courses collection ────────────────────────
     match /courses/{courseId} {
       allow read:   if isLoggedIn() || resource.data.published == true;
@@ -78,35 +75,31 @@ service cloud.firestore {
                        request.resource.data.diff(resource.data).affectedKeys()
                          .hasOnly(['avgRating', 'totalRatings']);
     }
-
     // ── lessons subcollection ─────────────────────
     match /courses/{courseId}/lessons/{lessonId} {
       allow read:   if isLoggedIn();
       allow write:  if isAdmin();
     }
-
     // ── progress subcollection ────────────────────
     match /courses/{courseId}/progress/{uid} {
       allow read:   if isLoggedIn() && (isOwner(uid) || isAdmin());
       allow write:  if isLoggedIn() && isOwner(uid);
     }
-
     // ── notices collection ────────────────────────
     match /notices/{id} {
       allow read:   if isLoggedIn();
       allow write:  if isAdmin();
     }
-
     // ── siteSettings collection ───────────────────
     match /siteSettings/{doc} {
       allow read:   if true;   // public — landing page এ দরকার
       allow write:  if isAdmin();
     }
-
     // ── certificates collection ───────────────────
     match /certificates/{id} {
-      allow read:   if isLoggedIn();
-      allow write:  if isAdmin();
+      allow read:   if true;  // public — verification এর জন্য
+      allow create: if isLoggedIn() && request.resource.data.userId == request.auth.uid;
+      allow delete: if isAdmin();
     }
     match /payments/{id} {
   		allow create: if isLoggedIn() && request.resource.data.userId == request.auth.uid;
@@ -121,7 +114,12 @@ service cloud.firestore {
       allow update: if isLoggedIn() && resource.data.userId == request.auth.uid;
       allow delete: if isAdmin();
     }
-
+    match /userProgress/{uid} {
+  		allow read, write: if isLoggedIn() && isOwner(uid);
+  		match /courses/{courseId} {
+    		allow read, write: if isLoggedIn() && isOwner(uid);
+  		}
+		}
   }
 }
 ```
