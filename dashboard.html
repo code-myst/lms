@@ -454,6 +454,286 @@ img { display: block; }
 }
 
 /* ═══════════════════════════════════════
+   PRICE BADGE
+═══════════════════════════════════════ */
+.price-badge {
+  display: inline-flex; align-items: center; gap: .3rem;
+  background: rgba(255,183,3,.12);
+  color: var(--amber);
+  border: 1px solid rgba(255,183,3,.25);
+  font-size: .7rem; font-weight: 700;
+  padding: .2rem .65rem; border-radius: 20px;
+  margin-bottom: .6rem;
+  letter-spacing: .02em;
+}
+.price-badge.free {
+  background: rgba(6,214,160,.1);
+  color: var(--cyan);
+  border-color: rgba(6,214,160,.2);
+}
+.btn-paid {
+  background: linear-gradient(135deg, var(--amber), #e6a000);
+  color: #0D0F14;
+}
+.btn-paid:hover { filter: brightness(1.1); transform: translateY(-1px); }
+
+/* ═══════════════════════════════════════
+   PAYMENT MODAL
+═══════════════════════════════════════ */
+.pay-overlay {
+  display: none;
+  position: fixed; inset: 0; z-index: 500;
+  background: rgba(0,0,0,.7);
+  backdrop-filter: blur(8px);
+  align-items: center; justify-content: center;
+  padding: 1rem;
+}
+.pay-overlay.show { display: flex; animation: fadeOv .2s ease; }
+@keyframes fadeOv { from { opacity: 0; } to { opacity: 1; } }
+
+.pay-modal {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 20px;
+  width: 100%; max-width: 460px;
+  max-height: 90vh; overflow-y: auto;
+  padding: 2rem;
+  box-shadow: 0 32px 80px rgba(0,0,0,.5);
+  animation: popUp .3s cubic-bezier(.34,1.56,.64,1) both;
+  position: relative;
+}
+@keyframes popUp {
+  from { opacity: 0; transform: scale(.9) translateY(20px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.pay-close {
+  position: absolute; top: 1rem; right: 1rem;
+  background: var(--card); border: 1px solid var(--border);
+  color: var(--muted); border-radius: 8px;
+  width: 30px; height: 30px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: .9rem;
+  transition: background .2s, color .2s;
+}
+.pay-close:hover { background: var(--border2); color: var(--ink); }
+
+.pay-title {
+  font-size: 1.1rem; font-weight: 800;
+  margin-bottom: .25rem;
+}
+.pay-course-name {
+  font-size: .8rem; color: var(--muted);
+  font-family: var(--bn); margin-bottom: 1.4rem;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.pay-amount-row {
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 12px; padding: .9rem 1.1rem;
+  margin-bottom: 1.4rem;
+}
+.pay-amount-label { font-size: .78rem; color: var(--muted); font-family: var(--bn); }
+.pay-amount-val { font-size: 1.4rem; font-weight: 800; color: var(--amber); }
+
+/* method selector */
+.pay-methods-label {
+  font-size: .72rem; font-weight: 700; color: var(--muted);
+  text-transform: uppercase; letter-spacing: .07em;
+  margin-bottom: .7rem;
+}
+.pay-methods {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: .6rem; margin-bottom: 1.4rem;
+}
+.pay-method-btn {
+  padding: .6rem .4rem;
+  background: var(--card); border: 1.5px solid var(--border);
+  border-radius: 10px; cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; gap: .35rem;
+  transition: border-color .18s, background .18s;
+  font-family: var(--font);
+}
+.pay-method-btn:hover { border-color: var(--primary); background: rgba(67,97,238,.07); }
+.pay-method-btn.selected { border-color: var(--primary); background: rgba(67,97,238,.12); }
+.pay-method-icon { font-size: 1.4rem; }
+.pay-method-name { font-size: .7rem; font-weight: 700; color: var(--soft); }
+.pay-method-btn.selected .pay-method-name { color: var(--primary); }
+
+/* instruction box */
+.pay-instruction {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 12px; padding: 1rem 1.1rem;
+  margin-bottom: 1.2rem; display: none;
+  animation: fadeOv .2s ease;
+}
+.pay-instruction.show { display: block; }
+.pay-inst-row {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: .3rem;
+}
+.pay-inst-label { font-size: .72rem; color: var(--muted); font-family: var(--bn); }
+.pay-number {
+  font-size: 1.05rem; font-weight: 800;
+  letter-spacing: .04em; color: var(--ink);
+}
+.pay-copy-btn {
+  background: rgba(67,97,238,.15); color: var(--primary);
+  border: none; border-radius: 6px;
+  font-size: .7rem; font-weight: 700; padding: .25rem .6rem;
+  cursor: pointer; font-family: var(--font);
+  transition: background .18s;
+}
+.pay-copy-btn:hover { background: var(--primary); color: #fff; }
+.pay-inst-note {
+  font-size: .76rem; color: var(--soft);
+  font-family: var(--bn); margin-top: .5rem;
+  line-height: 1.55; border-top: 1px solid var(--border); padding-top: .5rem;
+}
+
+/* TrxID input */
+.pay-input-label {
+  font-size: .72rem; font-weight: 700; color: var(--muted);
+  text-transform: uppercase; letter-spacing: .07em;
+  margin-bottom: .45rem; display: block;
+}
+.pay-input {
+  width: 100%; padding: .75rem 1rem;
+  background: var(--card); border: 1.5px solid var(--border);
+  border-radius: 10px; color: var(--ink);
+  font-size: .92rem; font-family: var(--font);
+  outline: none; transition: border-color .2s;
+  margin-bottom: 1rem;
+}
+.pay-input:focus { border-color: var(--primary); }
+.pay-input::placeholder { color: var(--muted); }
+
+.btn-pay-submit {
+  width: 100%; padding: .8rem;
+  background: var(--primary); color: #fff;
+  border: none; border-radius: 10px;
+  font-size: .9rem; font-weight: 700;
+  font-family: var(--font); cursor: pointer;
+  transition: background .2s, transform .15s;
+}
+.btn-pay-submit:hover { background: #3251d4; transform: translateY(-1px); }
+.btn-pay-submit:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+
+.pay-msg {
+  margin-top: .8rem; padding: .6rem 1rem;
+  border-radius: 8px; font-size: .82rem;
+  font-family: var(--bn); text-align: center; display: none;
+}
+.pay-msg.err { background: rgba(251,86,7,.1); color: #fb8c5a; border: 1px solid rgba(251,86,7,.2); display: block; }
+.pay-msg.ok  { background: rgba(6,214,160,.1); color: var(--cyan); border: 1px solid rgba(6,214,160,.2); display: block; }
+
+/* pending badge on card */
+.btn-pending {
+  background: rgba(255,183,3,.1);
+  color: var(--amber); border: 1px solid rgba(255,183,3,.2);
+  cursor: default;
+}
+
+/* ═══════════════════════════════════════
+   RATING
+═══════════════════════════════════════ */
+.rating-row {
+  display: flex; align-items: center; gap: .35rem;
+  margin-bottom: .5rem;
+}
+.stars-display { display: flex; gap: 2px; }
+.star-filled { color: var(--amber); font-size: .8rem; }
+.star-empty  { color: var(--border2); font-size: .8rem; }
+.rating-count { font-size: .72rem; color: var(--muted); }
+
+.btn-rate {
+  background: rgba(255,183,3,.1);
+  color: var(--amber); border: 1px solid rgba(255,183,3,.2);
+  font-size: .78rem;
+}
+.btn-rate:hover { background: rgba(255,183,3,.2); }
+
+/* Rating Modal */
+.rate-overlay {
+  display: none; position: fixed; inset: 0; z-index: 600;
+  background: rgba(0,0,0,.75); backdrop-filter: blur(8px);
+  align-items: center; justify-content: center; padding: 1rem;
+}
+.rate-overlay.show { display: flex; animation: fadeOv .2s ease; }
+
+.rate-modal {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 20px;
+  width: 100%; max-width: 400px;
+  padding: 2rem; position: relative;
+  box-shadow: 0 32px 80px rgba(0,0,0,.5);
+  animation: popUp .3s cubic-bezier(.34,1.56,.64,1) both;
+}
+.rate-close {
+  position: absolute; top: 1rem; right: 1rem;
+  background: var(--card); border: 1px solid var(--border);
+  color: var(--muted); border-radius: 8px;
+  width: 30px; height: 30px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: .9rem;
+  transition: background .2s;
+}
+.rate-close:hover { background: var(--border2); color: var(--ink); }
+
+.rate-course-name {
+  font-size: .82rem; color: var(--muted);
+  font-family: var(--bn); margin-bottom: 1.5rem;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.star-picker {
+  display: flex; gap: .5rem; justify-content: center;
+  margin-bottom: 1.2rem;
+}
+.star-pick-btn {
+  font-size: 2rem; background: none; border: none;
+  cursor: pointer; transition: transform .15s;
+  line-height: 1; filter: grayscale(1) brightness(.5);
+}
+.star-pick-btn.lit { filter: none; }
+.star-pick-btn:hover { transform: scale(1.2); }
+
+.rate-labels {
+  text-align: center; font-size: .78rem;
+  color: var(--soft); font-family: var(--bn);
+  margin-bottom: 1.2rem; min-height: 1.1rem;
+}
+.rate-textarea {
+  width: 100%; padding: .75rem 1rem;
+  background: var(--card); border: 1.5px solid var(--border);
+  border-radius: 10px; color: var(--ink);
+  font-size: .85rem; font-family: var(--bn);
+  outline: none; resize: vertical; min-height: 80px;
+  transition: border-color .2s; margin-bottom: 1rem;
+}
+.rate-textarea:focus { border-color: var(--primary); }
+.rate-textarea::placeholder { color: var(--muted); }
+
+.btn-rate-submit {
+  width: 100%; padding: .75rem;
+  background: var(--amber); color: #0D0F14;
+  border: none; border-radius: 10px;
+  font-size: .9rem; font-weight: 700;
+  font-family: var(--font); cursor: pointer;
+  transition: filter .2s, transform .15s;
+}
+.btn-rate-submit:hover { filter: brightness(1.1); transform: translateY(-1px); }
+.btn-rate-submit:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+
+.rate-msg {
+  margin-top: .7rem; padding: .55rem 1rem;
+  border-radius: 8px; font-size: .82rem;
+  font-family: var(--bn); text-align: center; display: none;
+}
+.rate-msg.ok  { background: rgba(6,214,160,.1); color: var(--cyan); border: 1px solid rgba(6,214,160,.2); display: block; }
+.rate-msg.err { background: rgba(251,86,7,.1); color: #fb8c5a; border: 1px solid rgba(251,86,7,.2); display: block; }
+
+/* ═══════════════════════════════════════
    SKELETON LOADER
 ═══════════════════════════════════════ */
 .skeleton {
@@ -759,6 +1039,69 @@ img { display: block; }
 </main>
 
 <!-- ══════════════════════════════════
+     PAYMENT MODAL
+══════════════════════════════════ -->
+<div class="pay-overlay" id="payOverlay" onclick="closePayModal(event)">
+  <div class="pay-modal" id="payModal">
+    <button class="pay-close" onclick="closePayModal(null,true)">✕</button>
+
+    <div class="pay-title">💳 পেমেন্ট করুন</div>
+    <div class="pay-course-name" id="payCourseName">—</div>
+
+    <div class="pay-amount-row">
+      <span class="pay-amount-label">কোর্স ফি</span>
+      <span class="pay-amount-val" id="payAmountVal">৳0</span>
+    </div>
+
+    <!-- Method selector — JS দিয়ে fill হবে siteSettings থেকে -->
+    <div class="pay-methods-label">পেমেন্ট মেথড বেছে নিন</div>
+    <div class="pay-methods" id="payMethods"></div>
+
+    <!-- Instruction box -->
+    <div class="pay-instruction" id="payInstruction">
+      <div class="pay-inst-row">
+        <span class="pay-inst-label" id="payInstLabel">নম্বরে পাঠান</span>
+        <span class="pay-number" id="payNumber">—</span>
+        <button class="pay-copy-btn" onclick="copyNumber()">Copy</button>
+      </div>
+      <div class="pay-inst-note" id="payInstNote">উপরের নম্বরে Send Money করুন, তারপর নিচে Transaction ID দিন।</div>
+    </div>
+
+    <!-- TrxID -->
+    <label class="pay-input-label">Transaction ID (TrxID)</label>
+    <input class="pay-input" id="payTrxInput" placeholder="যেমন: 8N3K2X1A9B" />
+
+    <button class="btn-pay-submit" id="btnPaySubmit" onclick="submitPayment()">✅ পেমেন্ট নিশ্চিত করুন</button>
+    <div class="pay-msg" id="payMsg"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     RATING MODAL
+══════════════════════════════════ -->
+<div class="rate-overlay" id="rateOverlay" onclick="closeRateModal(event)">
+  <div class="rate-modal" id="rateModal">
+    <button class="rate-close" onclick="closeRateModal(null,true)">✕</button>
+    <div style="font-size:1.1rem;font-weight:800;margin-bottom:.3rem">⭐ রেটিং দিন</div>
+    <div class="rate-course-name" id="rateCourseName">—</div>
+
+    <div class="star-picker" id="starPicker">
+      <button class="star-pick-btn" onclick="pickStar(1)">⭐</button>
+      <button class="star-pick-btn" onclick="pickStar(2)">⭐</button>
+      <button class="star-pick-btn" onclick="pickStar(3)">⭐</button>
+      <button class="star-pick-btn" onclick="pickStar(4)">⭐</button>
+      <button class="star-pick-btn" onclick="pickStar(5)">⭐</button>
+    </div>
+    <div class="rate-labels" id="rateLabel">কতটা ভালো লেগেছে?</div>
+
+    <textarea class="rate-textarea" id="rateReview" placeholder="আপনার মতামত লিখুন (ঐচ্ছিক)..."></textarea>
+
+    <button class="btn-rate-submit" id="btnRateSubmit" onclick="submitRating()">⭐ রেটিং জমা দিন</button>
+    <div class="rate-msg" id="rateMsg"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
      MOBILE BOTTOM NAV
 ══════════════════════════════════ -->
 <nav class="bottom-nav">
@@ -791,7 +1134,13 @@ const db   = firebase.firestore();
 /* ── State ───────────────────────────────── */
 let currentUser = null;
 let userDoc     = null;
-let allCourses  = [];  // cache for search
+let allCourses  = [];
+let pendingCourseIds = new Set();
+let paymentMethods   = [];
+let activePayCourse  = null;
+let userRatings      = {};   // courseId → { rating, review }
+let activeRateCourse = null;
+let pickedStar       = 0;
 
 /* ── Boot ────────────────────────────────── */
 auth.onAuthStateChanged(async user => {
@@ -827,7 +1176,7 @@ auth.onAuthStateChanged(async user => {
   await loadSiteSettings();
 
   /* data */
-  await Promise.all([loadAllCourses(), loadNotices()]);
+  await Promise.all([loadAllCourses(), loadNotices(), loadPendingPayments(), loadUserRatings()]);
   buildHomePage();
 
   /* hide loader */
@@ -853,6 +1202,11 @@ async function loadSiteSettings() {
     }
     if (s.faviconUrl) document.getElementById('favicon').href = s.faviconUrl;
     if (s.primaryColor) document.documentElement.style.setProperty('--primary', s.primaryColor);
+
+    // payment methods cache
+    if (s.paymentMethods && Array.isArray(s.paymentMethods)) {
+      paymentMethods = s.paymentMethods;
+    }
   } catch(e) { console.warn('Settings:', e); }
 }
 
@@ -916,35 +1270,64 @@ function buildHomePage() {
 /* ── Course Card HTML ────────────────────── */
 const gradients = ['g1','g2','g3','g4','g5','g6'];
 function courseCard(c, enrolled, idx = 0) {
-  const g    = gradients[idx % gradients.length];
-  const prog = enrolled ? ((c.progress && c.progress[currentUser.uid]) || 0) : 0;
+  const g       = gradients[idx % gradients.length];
+  const prog    = enrolled ? ((c.progress && c.progress[currentUser.uid]) || 0) : 0;
   const lessons = c.totalLessons || c.lessons || 0;
+  const isPaid  = (c.price || 0) > 0;
+  const pending = pendingCourseIds.has(c.id);
 
-  /* thumbnail: real image or fallback gradient+emoji */
   const thumbContent = c.thumbnailUrl
     ? `<img class="thumb-img" src="${c.thumbnailUrl}" alt="${c.title}" loading="lazy"/>
        <span class="thumb-category">${c.category || 'General'}</span>`
     : `📚<span class="thumb-category">${c.category || 'General'}</span>`;
 
+  // price badge
+  const priceBadge = isPaid
+    ? `<div class="price-badge">💰 ৳${c.price}</div>`
+    : `<div class="price-badge free">✦ Free</div>`;
+
+  // rating display
+  const avg   = c.avgRating   ? parseFloat(c.avgRating).toFixed(1)  : null;
+  const total = c.totalRatings || 0;
+  const myR   = userRatings[c.id];
+  const ratingBadge = avg
+    ? `<div class="rating-row">
+        <div class="stars-display">${starsHtml(parseFloat(avg))}</div>
+        <span class="rating-count">${avg} (${total})</span>
+       </div>`
+    : '';
+
+  // action buttons
   let btn = '';
-  if (!enrolled) {
-    btn = `<button class="btn-card btn-enroll" onclick="event.stopPropagation(); enrollCourse('${c.id}',this)">✅ এনরোল করুন</button>`;
-  } else if (prog >= 100) {
-    btn = `<button class="btn-card btn-done">✓ সম্পন্ন</button>`;
+  if (enrolled) {
+    const rateBtn = `<button class="btn-card btn-rate" onclick="event.stopPropagation(); openRateModal('${c.id}')">
+      ${myR ? `✏️ রেটিং পরিবর্তন (${myR.rating}⭐)` : '⭐ রেটিং দিন'}
+    </button>`;
+    if (prog >= 100) {
+      btn = `<button class="btn-card btn-done">✓ সম্পন্ন</button>${rateBtn}`;
+    } else {
+      btn = `<button class="btn-card btn-continue" onclick="event.stopPropagation(); openCourse('${c.id}')">▶ চালিয়ে যান</button>${rateBtn}`;
+    }
+  } else if (pending) {
+    btn = `<button class="btn-card btn-pending">⏳ যাচাই হচ্ছে...</button>`;
+  } else if (isPaid) {
+    btn = `<button class="btn-card btn-paid" onclick="event.stopPropagation(); openPayModal('${c.id}')">💳 ৳${c.price} — ভর্তি হন</button>`;
   } else {
-    btn = `<button class="btn-card btn-continue" onclick="event.stopPropagation(); openCourse('${c.id}')">▶ চালিয়ে যান</button>`;
+    btn = `<button class="btn-card btn-enroll" onclick="event.stopPropagation(); enrollCourse('${c.id}',this)">✅ এনরোল করুন</button>`;
   }
 
   return `
-  <div class="course-card" onclick="openCourse('${c.id}')">
+  <div class="course-card" onclick="${enrolled ? `openCourse('${c.id}')` : ''}">
     <div class="course-thumb ${c.thumbnailUrl ? '' : g}">${thumbContent}</div>
     <div class="course-body">
+      ${priceBadge}
       <div class="course-title">${c.title}</div>
       <div class="course-meta">
         <span>👨‍🏫 ${c.instructor || 'Admin'}</span>
         <span>·</span>
         <span>📹 ${lessons} লেসন</span>
       </div>
+      ${ratingBadge}
       ${enrolled ? `
         <div class="progress-wrap">
           <div class="progress-top">
@@ -954,9 +1337,20 @@ function courseCard(c, enrolled, idx = 0) {
             <div class="progress-fill" style="width:${prog}%"></div>
           </div>
         </div>` : ''}
-      ${btn}
+      <div style="display:flex;flex-direction:column;gap:.4rem">${btn}</div>
     </div>
   </div>`;
+}
+
+/* star html helper */
+function starsHtml(avg) {
+  let html = '';
+  for (let i = 1; i <= 5; i++) {
+    html += i <= Math.round(avg)
+      ? `<span class="star-filled">★</span>`
+      : `<span class="star-empty">★</span>`;
+  }
+  return html;
 }
 
 /* ── My Courses ──────────────────────────── */
@@ -1008,6 +1402,290 @@ function noticeItem(n) {
       <div class="notice-date">🗓 ${date}</div>
     </div>
   </div>`;
+}
+
+/* ── Load Pending Payments ───────────────── */
+async function loadPendingPayments() {
+  try {
+    const snap = await db.collection('payments')
+      .where('userId', '==', currentUser.uid)
+      .where('status', '==', 'pending')
+      .get();
+    snap.forEach(doc => pendingCourseIds.add(doc.data().courseId));
+  } catch(e) { console.warn('Payments load:', e); }
+}
+
+/* ── Load User Ratings ───────────────────── */
+async function loadUserRatings() {
+  try {
+    const snap = await db.collection('ratings')
+      .where('userId', '==', currentUser.uid)
+      .get();
+    snap.forEach(doc => {
+      const d = doc.data();
+      userRatings[d.courseId] = { id: doc.id, rating: d.rating, review: d.review || '' };
+    });
+  } catch(e) { console.warn('Ratings load:', e); }
+}
+
+/* ── Open Rating Modal ───────────────────── */
+const starLabels = ['', 'খুব খারাপ 😞', 'খারাপ 😕', 'ঠিক আছে 😐', 'ভালো 😊', 'অসাধারণ! 🤩'];
+
+function openRateModal(courseId) {
+  const course = allCourses.find(c => c.id === courseId);
+  if (!course) return;
+  activeRateCourse = course;
+  pickedStar = 0;
+
+  document.getElementById('rateCourseName').textContent = course.title;
+  document.getElementById('rateMsg').className = 'rate-msg';
+  document.getElementById('rateMsg').textContent = '';
+
+  // pre-fill if already rated
+  const existing = userRatings[courseId];
+  if (existing) {
+    pickedStar = existing.rating;
+    document.getElementById('rateReview').value = existing.review || '';
+    document.getElementById('rateLabel').textContent = starLabels[existing.rating];
+    document.getElementById('btnRateSubmit').textContent = '✏️ রেটিং আপডেট করুন';
+  } else {
+    document.getElementById('rateReview').value = '';
+    document.getElementById('rateLabel').textContent = 'কতটা ভালো লেগেছে?';
+    document.getElementById('btnRateSubmit').textContent = '⭐ রেটিং জমা দিন';
+  }
+  updateStarPicker(pickedStar);
+
+  document.getElementById('rateOverlay').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeRateModal(event, force) {
+  if (!force && event && document.getElementById('rateModal').contains(event.target)) return;
+  document.getElementById('rateOverlay').classList.remove('show');
+  document.body.style.overflow = '';
+  activeRateCourse = null;
+  pickedStar = 0;
+}
+
+function pickStar(n) {
+  pickedStar = n;
+  updateStarPicker(n);
+  document.getElementById('rateLabel').textContent = starLabels[n];
+}
+
+function updateStarPicker(n) {
+  document.querySelectorAll('.star-pick-btn').forEach((btn, i) => {
+    btn.classList.toggle('lit', i < n);
+  });
+}
+
+/* ── Submit Rating ───────────────────────── */
+async function submitRating() {
+  if (!activeRateCourse) return;
+  if (!pickedStar) {
+    showRateMsg('err', '❌ আগে star বেছে নিন'); return;
+  }
+  const review = document.getElementById('rateReview').value.trim();
+  const btn    = document.getElementById('btnRateSubmit');
+  btn.disabled = true; btn.textContent = 'জমা হচ্ছে...';
+
+  try {
+    const courseId = activeRateCourse.id;
+    const existing = userRatings[courseId];
+    const payload  = {
+      courseId,
+      userId:    currentUser.uid,
+      userName:  userDoc.name || currentUser.displayName || 'Student',
+      rating:    pickedStar,
+      review,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+    };
+
+    const batch = db.batch();
+
+    // upsert rating doc
+    let ratingRef;
+    if (existing) {
+      ratingRef = db.collection('ratings').doc(existing.id);
+      batch.update(ratingRef, payload);
+    } else {
+      ratingRef = db.collection('ratings').doc();
+      payload.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+      batch.set(ratingRef, payload);
+    }
+
+    // recalculate avg — fetch all ratings for this course
+    const allRatingsSnap = await db.collection('ratings')
+      .where('courseId', '==', courseId).get();
+
+    let sum = pickedStar, count = 1;
+    allRatingsSnap.forEach(doc => {
+      if (doc.id !== (existing?.id || '__new__')) {
+        sum += doc.data().rating; count++;
+      }
+    });
+    const avg = Math.round((sum / count) * 10) / 10;
+
+    batch.update(db.collection('courses').doc(courseId), {
+      avgRating:    avg,
+      totalRatings: count,
+    });
+
+    await batch.commit();
+
+    // update local state
+    userRatings[courseId] = { id: existing?.id || ratingRef.id, rating: pickedStar, review };
+    const course = allCourses.find(c => c.id === courseId);
+    if (course) { course.avgRating = avg; course.totalRatings = count; }
+
+    showRateMsg('ok', '✅ রেটিং সফলভাবে জমা হয়েছে! ধন্যবাদ।');
+    btn.textContent = '✓ জমা হয়েছে';
+
+    setTimeout(() => {
+      renderAllCourses(allCourses);
+      buildHomePage();
+      renderMyCourses();
+      closeRateModal(null, true);
+      btn.disabled = false;
+      btn.textContent = existing ? '✏️ রেটিং আপডেট করুন' : '⭐ রেটিং জমা দিন';
+    }, 1500);
+  } catch(e) {
+    console.error(e);
+    showRateMsg('err', '❌ সমস্যা হয়েছে, আবার চেষ্টা করুন');
+    btn.disabled = false; btn.textContent = '⭐ রেটিং জমা দিন';
+  }
+}
+
+function showRateMsg(type, text) {
+  const el = document.getElementById('rateMsg');
+  el.className = 'rate-msg ' + type;
+  el.textContent = text;
+}
+
+/* ── Open Payment Modal ──────────────────── */
+function openPayModal(courseId) {
+  const course = allCourses.find(c => c.id === courseId);
+  if (!course) return;
+  activePayCourse = course;
+
+  document.getElementById('payCourseName').textContent = course.title;
+  document.getElementById('payAmountVal').textContent  = '৳' + (course.price || 0);
+  document.getElementById('payTrxInput').value = '';
+  document.getElementById('payMsg').className  = 'pay-msg';
+  document.getElementById('payInstruction').classList.remove('show');
+
+  // render method buttons
+  const methods = paymentMethods.length ? paymentMethods : [
+    { name: 'bKash',  icon: '🟣', number: '01XXXXXXXXX', note: 'Send Money করুন' },
+    { name: 'Nagad',  icon: '🟠', number: '01XXXXXXXXX', note: 'Send Money করুন' },
+    { name: 'Rocket', icon: '🟤', number: '01XXXXXXXXX', note: 'Send Money করুন' },
+  ];
+  document.getElementById('payMethods').innerHTML = methods.map((m, i) => `
+    <button class="pay-method-btn" onclick="selectMethod(${i})" id="pm-${i}">
+      <span class="pay-method-icon">${m.icon || '💳'}</span>
+      <span class="pay-method-name">${m.name}</span>
+    </button>`).join('');
+
+  document.getElementById('payOverlay').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+function closePayModal(event, force) {
+  if (!force && event && document.getElementById('payModal').contains(event.target)) return;
+  document.getElementById('payOverlay').classList.remove('show');
+  document.body.style.overflow = '';
+  activePayCourse = null;
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    closePayModal(null, true);
+    closeRateModal(null, true);
+  }
+});
+
+/* ── Select Payment Method ───────────────── */
+function selectMethod(idx) {
+  // highlight selected
+  document.querySelectorAll('.pay-method-btn').forEach((b,i) =>
+    b.classList.toggle('selected', i === idx));
+
+  const methods = paymentMethods.length ? paymentMethods : [
+    { name: 'bKash',  icon: '🟣', number: '01XXXXXXXXX', note: 'Send Money করুন' },
+    { name: 'Nagad',  icon: '🟠', number: '01XXXXXXXXX', note: 'Send Money করুন' },
+    { name: 'Rocket', icon: '🟤', number: '01XXXXXXXXX', note: 'Send Money করুন' },
+  ];
+  const m = methods[idx];
+  document.getElementById('payInstLabel').textContent = m.name + ' নম্বর';
+  document.getElementById('payNumber').textContent    = m.number || '—';
+  document.getElementById('payInstNote').textContent  = m.note   || 'Send Money করুন, তারপর TrxID দিন।';
+  document.getElementById('payInstruction').classList.add('show');
+}
+
+function copyNumber() {
+  const num = document.getElementById('payNumber').textContent;
+  navigator.clipboard.writeText(num).then(() => {
+    const btn = document.querySelector('.pay-copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 1800);
+  });
+}
+
+/* ── Submit Payment ──────────────────────── */
+async function submitPayment() {
+  const trx = document.getElementById('payTrxInput').value.trim();
+  const msg = document.getElementById('payMsg');
+  const btn = document.getElementById('btnPaySubmit');
+
+  if (!activePayCourse) return;
+  if (!trx) {
+    showPayMsg('err', '❌ Transaction ID দিন'); return;
+  }
+  // check a method is selected
+  const selected = document.querySelector('.pay-method-btn.selected');
+  if (!selected) {
+    showPayMsg('err', '❌ পেমেন্ট মেথড বেছে নিন'); return;
+  }
+  const methodName = selected.querySelector('.pay-method-name').textContent;
+
+  btn.disabled = true; btn.textContent = 'জমা হচ্ছে...';
+  try {
+    await db.collection('payments').add({
+      userId:       currentUser.uid,
+      userName:     userDoc.name || currentUser.displayName || '',
+      userPhone:    userDoc.phone || '',
+      courseId:     activePayCourse.id,
+      courseTitle:  activePayCourse.title,
+      amount:       activePayCourse.price || 0,
+      method:       methodName,
+      transactionId: trx,
+      status:       'pending',
+      submittedAt:  firebase.firestore.FieldValue.serverTimestamp(),
+    });
+
+    pendingCourseIds.add(activePayCourse.id);
+    showPayMsg('ok', '✅ পেমেন্ট জমা হয়েছে! Admin যাচাই করলে এনরোল হবে।');
+    btn.textContent = '✓ জমা হয়েছে';
+
+    // re-render grids after 1.5s then close
+    setTimeout(() => {
+      renderAllCourses(allCourses);
+      buildHomePage();
+      renderMyCourses();
+      closePayModal(null, true);
+      btn.disabled = false; btn.textContent = '✅ পেমেন্ট নিশ্চিত করুন';
+    }, 1800);
+  } catch(e) {
+    console.error(e);
+    showPayMsg('err', '❌ সমস্যা হয়েছে, আবার চেষ্টা করুন');
+    btn.disabled = false; btn.textContent = '✅ পেমেন্ট নিশ্চিত করুন';
+  }
+}
+
+function showPayMsg(type, text) {
+  const el = document.getElementById('payMsg');
+  el.className = 'pay-msg ' + type;
+  el.textContent = text;
 }
 
 /* ── Enroll ──────────────────────────────── */
