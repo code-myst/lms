@@ -71,8 +71,12 @@ service cloud.firestore {
 
     // ── courses collection ────────────────────────
     match /courses/{courseId} {
-      allow read:   if isLoggedIn();
+      allow read:   if isLoggedIn() || resource.data.published == true;
       allow write:  if isAdmin();
+      // student শুধু avgRating ও totalRatings update করতে পারবে
+      allow update: if isLoggedIn() &&
+                       request.resource.data.diff(resource.data).affectedKeys()
+                         .hasOnly(['avgRating', 'totalRatings']);
     }
 
     // ── lessons subcollection ─────────────────────
@@ -103,6 +107,19 @@ service cloud.firestore {
     match /certificates/{id} {
       allow read:   if isLoggedIn();
       allow write:  if isAdmin();
+    }
+    match /payments/{id} {
+  		allow create: if isLoggedIn() && request.resource.data.userId == request.auth.uid;
+  		allow read:   if isLoggedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+  		allow update: if isAdmin();
+  		allow delete: if isAdmin();
+    }
+    // ── ratings collection ────────────────────────
+    match /ratings/{id} {
+      allow read:   if isLoggedIn();
+      allow create: if isLoggedIn() && request.resource.data.userId == request.auth.uid;
+      allow update: if isLoggedIn() && resource.data.userId == request.auth.uid;
+      allow delete: if isAdmin();
     }
 
   }
