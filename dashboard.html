@@ -423,47 +423,66 @@ img { display: block; }
    CERTIFICATE MODAL
 ═══════════════════════════════════════ */
 .cert-overlay {
-  display: none; position: fixed; inset: 0; z-index: 700;
-  background: rgba(0,0,0,.85); backdrop-filter: blur(10px);
-  align-items: center; justify-content: center; padding: 1rem;
+  display:none; position:fixed; inset:0; z-index:700;
+  background:rgba(0,0,0,.85); backdrop-filter:blur(10px);
+  align-items:center; justify-content:center; padding:1rem;
 }
-.cert-overlay.show { display: flex; animation: fadeOv .2s ease; }
+.cert-overlay.show { display:flex; animation:fadeOv .2s ease; }
 .cert-modal {
-  background: var(--surface); border: 1px solid var(--border2);
-  border-radius: 20px; width: 100%; max-width: 520px;
-  padding: 1.8rem; position: relative;
-  box-shadow: 0 32px 80px rgba(0,0,0,.6);
-  animation: popUp .3s cubic-bezier(.34,1.56,.64,1) both;
-  max-height: 90vh; overflow-y: auto;
+  background:var(--surface); border:1px solid var(--border2);
+  border-radius:20px; width:100%; max-width:520px;
+  padding:1.8rem; position:relative;
+  box-shadow:0 32px 80px rgba(0,0,0,.6);
+  animation:popUp .3s cubic-bezier(.34,1.56,.64,1) both;
+  max-height:90vh; overflow-y:auto;
 }
 .cert-close {
-  position: absolute; top: 1rem; right: 1rem;
-  background: var(--card); border: 1px solid var(--border);
-  color: var(--muted); border-radius: 8px;
-  width: 30px; height: 30px;
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer; font-size: .9rem; transition: background .2s;
+  position:absolute; top:1rem; right:1rem;
+  background:var(--card); border:1px solid var(--border);
+  color:var(--muted); border-radius:8px; width:30px; height:30px;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; font-size:.9rem; transition:background .2s;
 }
-.cert-close:hover { background: var(--border2); color: var(--ink); }
+.cert-close:hover { background:var(--border2); color:var(--ink); }
+
+/* frame mode vs default mode */
 .cert-preview {
-  background: linear-gradient(135deg,#1a1506 0%,#2a2208 50%,#1a1506 100%);
-  border: 2px solid #C8A96E; border-radius: 14px;
-  padding: 2rem 1.5rem; text-align: center;
-  position: relative; overflow: hidden; margin-bottom: 1.2rem;
+  position:relative; border-radius:14px; overflow:hidden;
+  margin-bottom:1.2rem; text-align:center;
 }
-.cert-preview::before {
+.cert-frame-bg {
+  position:absolute; inset:0; width:100%; height:100%;
+  object-fit:cover; z-index:0; border-radius:14px;
+}
+.cert-preview-inner {
+  position:relative; z-index:1;
+  padding:2rem 1.5rem;
+}
+/* default dark style (no frame) */
+.cert-preview.no-frame {
+  background:linear-gradient(135deg,#1a1506 0%,#2a2208 50%,#1a1506 100%);
+  border:2px solid #C8A96E;
+}
+.cert-preview.no-frame::before {
   content:''; position:absolute; inset:6px;
-  border:1px solid rgba(200,169,110,.2); border-radius:10px; pointer-events:none;
+  border:1px solid rgba(200,169,110,.2); border-radius:10px; pointer-events:none; z-index:0;
 }
-.cp-corner { position:absolute; font-size:1.4rem; opacity:.3; }
+/* frame mode — text adapts */
+.cert-preview.has-frame .cp-heading,
+.cert-preview.has-frame .cp-course,
+.cert-preview.has-frame .cp-name { color: #1a1506; }
+.cert-preview.has-frame .cp-certify,
+.cert-preview.has-frame .cp-course-label,
+.cert-preview.has-frame .cp-meta-label { color: rgba(26,21,6,.5); }
+.cert-preview.has-frame .cp-school { color: #7a5c1e; }
+.cert-preview.has-frame .cp-meta-val { color: #2a2208; }
+.cert-preview.has-frame .cp-id { color: rgba(26,21,6,.4); }
+.cert-preview.has-frame .cp-divider { background:linear-gradient(90deg,transparent,rgba(26,21,6,.2),transparent); }
+
+.cp-corner { position:absolute; font-size:1.4rem; opacity:.3; z-index:1; }
 .cp-corner.tl{top:10px;left:12px;} .cp-corner.tr{top:10px;right:12px;}
 .cp-corner.bl{bottom:10px;left:12px;} .cp-corner.br{bottom:10px;right:12px;}
-.cp-logo {
-  width:52px; height:52px; border-radius:12px;
-  background:rgba(200,169,110,.15); border:1.5px solid rgba(200,169,110,.3);
-  display:flex; align-items:center; justify-content:center;
-  margin:0 auto .8rem; overflow:hidden;
-}
+.cp-logo { width:52px; height:52px; border-radius:12px; background:rgba(200,169,110,.15); border:1.5px solid rgba(200,169,110,.3); display:flex; align-items:center; justify-content:center; margin:0 auto .8rem; overflow:hidden; }
 .cp-logo img { width:100%; height:100%; object-fit:cover; border-radius:10px; }
 .cp-logo-letter { font-size:1.4rem; font-weight:800; color:#C8A96E; }
 .cp-school { font-size:.62rem; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:#C8A96E; margin-bottom:.5rem; opacity:.8; }
@@ -478,14 +497,10 @@ img { display: block; }
 .cp-meta-label { font-size:.6rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:rgba(245,230,192,.3); margin-bottom:.2rem; }
 .cp-meta-val { font-size:.72rem; font-weight:700; color:rgba(245,230,192,.75); }
 .cp-seal { width:40px; height:40px; border-radius:50%; border:1.5px solid rgba(200,169,110,.35); background:rgba(200,169,110,.08); display:flex; align-items:center; justify-content:center; font-size:1.1rem; margin:0 auto; }
+.cp-signature { max-height:44px; max-width:120px; object-fit:contain; margin:0 auto; display:block; opacity:.85; }
 .cp-id { margin-top:.7rem; font-family:monospace; font-size:.6rem; color:rgba(200,169,110,.45); letter-spacing:.06em; }
 .cert-actions { display:grid; grid-template-columns:1fr 1fr; gap:.6rem; }
-.btn-cert-dl {
-  padding:.7rem; border:none; border-radius:10px;
-  font-size:.85rem; font-weight:700; font-family:var(--font);
-  cursor:pointer; transition:filter .2s,transform .15s;
-  display:flex; align-items:center; justify-content:center; gap:.4rem;
-}
+.btn-cert-dl { padding:.7rem; border:none; border-radius:10px; font-size:.85rem; font-weight:700; font-family:var(--font); cursor:pointer; transition:filter .2s,transform .15s; display:flex; align-items:center; justify-content:center; gap:.4rem; }
 .btn-cert-dl:hover { filter:brightness(1.1); transform:translateY(-1px); }
 .btn-cert-dl:disabled { opacity:.5; cursor:not-allowed; transform:none; }
 .btn-dl-img { background:linear-gradient(135deg,#C8A96E,#e6c87a); color:#0D0F14; }
@@ -1121,23 +1136,34 @@ img { display: block; }
     <button class="cert-close" onclick="closeCertModal(null,true)">✕</button>
     <div style="font-size:1rem;font-weight:800;margin-bottom:1rem">🎓 আপনার সার্টিফিকেট</div>
 
-    <div class="cert-preview" id="certPreview">
+    <div class="cert-preview no-frame" id="certPreview">
+      <img class="cert-frame-bg" id="certFrameBg" src="" alt="" style="display:none"/>
       <span class="cp-corner tl">✦</span><span class="cp-corner tr">✦</span>
       <span class="cp-corner bl">✦</span><span class="cp-corner br">✦</span>
-      <div class="cp-logo" id="cpLogoWrap"><span class="cp-logo-letter" id="cpLogoLetter">L</span></div>
-      <div class="cp-school" id="cpSchool">LMS Academy</div>
-      <div class="cp-heading">Certificate of Completion</div>
-      <div class="cp-certify">এই সার্টিফিকেট প্রদান করা হচ্ছে</div>
-      <div class="cp-name" id="cpName">—</div>
-      <div class="cp-course-label">সফলভাবে সম্পন্ন করেছেন</div>
-      <div class="cp-course" id="cpCourse">—</div>
-      <div class="cp-divider"></div>
-      <div class="cp-meta">
-        <div class="cp-meta-col"><div class="cp-meta-label">Instructor</div><div class="cp-meta-val" id="cpInstructor">—</div></div>
-        <div class="cp-meta-col"><div class="cp-seal">🎓</div></div>
-        <div class="cp-meta-col"><div class="cp-meta-label">Issue Date</div><div class="cp-meta-val" id="cpDate">—</div></div>
+      <div class="cert-preview-inner">
+        <div class="cp-logo" id="cpLogoWrap"><span class="cp-logo-letter" id="cpLogoLetter">L</span></div>
+        <div class="cp-school" id="cpSchool">LMS Academy</div>
+        <div class="cp-heading">Certificate of Completion</div>
+        <div class="cp-certify">এই সার্টিফিকেট প্রদান করা হচ্ছে</div>
+        <div class="cp-name" id="cpName">—</div>
+        <div class="cp-course-label">সফলভাবে সম্পন্ন করেছেন</div>
+        <div class="cp-course" id="cpCourse">—</div>
+        <div class="cp-divider"></div>
+        <div class="cp-meta">
+          <div class="cp-meta-col">
+            <div class="cp-meta-label">Instructor</div>
+            <div class="cp-meta-val" id="cpInstructor">—</div>
+          </div>
+          <div class="cp-meta-col" id="cpSealWrap">
+            <div class="cp-seal">🎓</div>
+          </div>
+          <div class="cp-meta-col">
+            <div class="cp-meta-label">Issue Date</div>
+            <div class="cp-meta-val" id="cpDate">—</div>
+          </div>
+        </div>
+        <div class="cp-id" id="cpId">CERT-———</div>
       </div>
-      <div class="cp-id" id="cpId">CERT-———</div>
     </div>
 
     <div class="cert-actions">
@@ -1255,6 +1281,8 @@ let userCerts        = {};   // courseId → certId
 let activeCert       = null;
 let siteLogoUrl      = '';
 let siteAppName      = '';
+let certSignatureUrl = '';
+let certFrameUrl     = '';
 
 /* ── Boot ────────────────────────────────── */
 auth.onAuthStateChanged(async user => {
@@ -1317,9 +1345,10 @@ async function loadSiteSettings() {
     if (s.faviconUrl) document.getElementById('favicon').href = s.faviconUrl;
     if (s.primaryColor) document.documentElement.style.setProperty('--primary', s.primaryColor);
 
-    // cache for certificate
-    siteAppName = s.appName || 'LMS';
-    siteLogoUrl = s.logoUrl || '';
+    siteAppName      = s.appName         || 'LMS';
+    siteLogoUrl      = s.logoUrl         || '';
+    certSignatureUrl = s.certSignatureUrl || '';
+    certFrameUrl     = s.certFrameUrl     || '';
 
     // payment methods cache
     if (s.paymentMethods && Array.isArray(s.paymentMethods)) {
@@ -1331,26 +1360,17 @@ async function loadSiteSettings() {
 /* ── Load All Courses ────────────────────── */
 async function loadAllCourses() {
   const [coursesSnap, progressSnap] = await Promise.all([
-    db.collection('courses')
-      .where('published', '==', true)
-      .orderBy('createdAt', 'desc')
-      .get(),
-    db.collection('userProgress')
-      .doc(currentUser.uid)
-      .collection('courses')
-      .get()
+    db.collection('courses').where('published','==',true).orderBy('createdAt','desc').get(),
+    db.collection('userProgress').doc(currentUser.uid).collection('courses').get()
   ]);
 
-  // build progress map: courseId → pct
+  // progress map: courseId → pct
   const progressMap = {};
-  progressSnap.forEach(doc => {
-    progressMap[doc.id] = doc.data().progress || 0;
-  });
+  progressSnap.forEach(doc => { progressMap[doc.id] = doc.data().progress || 0; });
 
   allCourses = [];
   coursesSnap.forEach(doc => {
     const c = { id: doc.id, ...doc.data() };
-    // inject progress from userProgress (reliable source)
     c._userProgress = progressMap[doc.id] || 0;
     allCourses.push(c);
   });
@@ -1364,9 +1384,8 @@ async function loadAllCourses() {
   enrolled.forEach(cid => {
     const c = allCourses.find(x => x.id === cid);
     if (!c) return;
-    const prog = c._userProgress;
-    if (prog >= 100) completed++;
-    else if (prog > 0) inProgress++;
+    if (c._userProgress >= 100) completed++;
+    else if (c._userProgress > 0) inProgress++;
   });
   document.getElementById('sCompleted').textContent  = completed;
   document.getElementById('sInProgress').textContent = inProgress;
@@ -1411,6 +1430,7 @@ function courseCard(c, enrolled, idx = 0) {
   const lessons = c.totalLessons || c.lessons || 0;
   const isPaid  = (c.price || 0) > 0;
   const pending = pendingCourseIds.has(c.id);
+  const hasCert = c.certificate === true;
 
   const thumbContent = c.thumbnailUrl
     ? `<img class="thumb-img" src="${c.thumbnailUrl}" alt="${c.title}" loading="lazy"/>
@@ -1440,9 +1460,10 @@ function courseCard(c, enrolled, idx = 0) {
       ${myR ? `✏️ রেটিং পরিবর্তন (${myR.rating}⭐)` : '⭐ রেটিং দিন'}
     </button>`;
     if (prog >= 100) {
-      btn = `<button class="btn-card btn-done">✓ সম্পন্ন</button>
-             <button class="btn-card btn-cert" onclick="event.stopPropagation(); openCertModal('${c.id}')">🎓 সার্টিফিকেট</button>
-             ${rateBtn}`;
+      const certBtn = hasCert
+        ? `<button class="btn-card btn-cert" onclick="event.stopPropagation(); openCertModal('${c.id}')">🎓 সার্টিফিকেট</button>`
+        : '';
+      btn = `<button class="btn-card btn-done">✓ সম্পন্ন</button>${certBtn}${rateBtn}`;
     } else {
       btn = `<button class="btn-card btn-continue" onclick="event.stopPropagation(); openCourse('${c.id}')">▶ চালিয়ে যান</button>${rateBtn}`;
     }
@@ -1556,11 +1577,8 @@ async function loadPendingPayments() {
 /* ── Load User Certificates ──────────────── */
 async function loadUserCerts() {
   try {
-    const snap = await db.collection('certificates')
-      .where('userId', '==', currentUser.uid).get();
-    snap.forEach(doc => {
-      userCerts[doc.data().courseId] = doc.id;
-    });
+    const snap = await db.collection('certificates').where('userId','==',currentUser.uid).get();
+    snap.forEach(doc => { userCerts[doc.data().courseId] = doc.id; });
   } catch(e) { console.warn('Certs:', e); }
 }
 
@@ -1572,19 +1590,38 @@ async function openCertModal(courseId) {
   document.getElementById('certOverlay').classList.add('show');
   document.body.style.overflow = 'hidden';
 
-  let certId   = userCerts[courseId];
-  let issuedAt;
+  // frame background — force reload every time
+  const preview = document.getElementById('certPreview');
+  const frameBg = document.getElementById('certFrameBg');
+  if (certFrameUrl) {
+    frameBg.src = '';
+    frameBg.style.display = 'block';
+    frameBg.src = certFrameUrl;
+    preview.className = 'cert-preview has-frame';
+  } else {
+    frameBg.src = '';
+    frameBg.style.display = 'none';
+    preview.className = 'cert-preview no-frame';
+  }
 
+  // signature
+  const sealWrap = document.getElementById('cpSealWrap');
+  if (certSignatureUrl) {
+    sealWrap.innerHTML = `<img class="cp-signature" src="${certSignatureUrl}" alt="signature" crossorigin="anonymous"/>`;
+  } else {
+    sealWrap.innerHTML = `<div class="cp-seal">🎓</div>`;
+  }
+
+  let certId = userCerts[courseId];
+  let issuedAt;
   if (!certId) {
     certId   = 'CERT-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).substr(2,4).toUpperCase();
     issuedAt = new Date();
     try {
       await db.collection('certificates').doc(certId).set({
-        certId,
-        userId:      currentUser.uid,
+        certId, userId: currentUser.uid,
         userName:    userDoc.name || currentUser.displayName || 'Student',
-        courseId,
-        courseTitle: course.title,
+        courseId,    courseTitle: course.title,
         instructor:  course.instructor || 'Admin',
         issuedAt:    firebase.firestore.FieldValue.serverTimestamp(),
       });
@@ -1598,7 +1635,7 @@ async function openCertModal(courseId) {
   }
 
   issuedAt = issuedAt || new Date();
-  const dateStr = issuedAt.toLocaleDateString('bn-BD', { year:'numeric', month:'long', day:'numeric' });
+  const dateStr = issuedAt.toLocaleDateString('en-GB', { year:'numeric', month:'long', day:'numeric' });
   const name    = userDoc.name || currentUser.displayName || 'Student';
 
   document.getElementById('cpName').textContent       = name;
@@ -1610,9 +1647,9 @@ async function openCertModal(courseId) {
 
   const logoWrap = document.getElementById('cpLogoWrap');
   if (siteLogoUrl) {
-    logoWrap.innerHTML = `<img src="${siteLogoUrl}" alt="logo"/>`;
+    logoWrap.innerHTML = `<img src="${siteLogoUrl}" alt="logo" crossorigin="anonymous"/>`;
   } else {
-    document.getElementById('cpLogoLetter').textContent = (siteAppName || 'L')[0].toUpperCase();
+    document.getElementById('cpLogoLetter').textContent = (siteAppName||'L')[0].toUpperCase();
   }
 
   activeCert = { certId, name, course, dateStr, issuedAt };
@@ -1622,19 +1659,25 @@ function closeCertModal(event, force) {
   if (!force && event && document.getElementById('certModal').contains(event.target)) return;
   document.getElementById('certOverlay').classList.remove('show');
   document.body.style.overflow = '';
+  // reset frame so next open reloads properly
+  const frameBg = document.getElementById('certFrameBg');
+  if (frameBg) { frameBg.src = ''; frameBg.style.display = 'none'; }
+  const preview = document.getElementById('certPreview');
+  if (preview) preview.className = 'cert-preview no-frame';
 }
 
-/* ── Download PNG (Canvas fallback) ─────── */
+/* ── Download PNG ────────────────────────── */
 async function downloadCertImg(btn) {
   btn.textContent = '⏳ তৈরি হচ্ছে...'; btn.disabled = true;
   try {
     const { default: html2canvas } = await import('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.esm.min.js');
     const canvas = await html2canvas(document.getElementById('certPreview'), {
-      scale: 3, useCORS: true, backgroundColor: '#1a1506', logging: false
+      scale:3, useCORS:true, allowTaint:true,
+      backgroundColor: certFrameUrl ? null : '#1a1506', logging:false
     });
     const a = document.createElement('a');
     a.href = canvas.toDataURL('image/png');
-    a.download = `certificate-${activeCert?.certId || 'cert'}.png`;
+    a.download = `certificate-${activeCert?.certId||'cert'}.png`;
     a.click();
   } catch(e) { drawCertCanvas(); }
   btn.textContent = '🖼 Image (PNG)'; btn.disabled = false;
@@ -1643,87 +1686,106 @@ async function downloadCertImg(btn) {
 function drawCertCanvas() {
   if (!activeCert) return;
   const { certId, name, course, dateStr } = activeCert;
-  const W = 1000, H = 700;
-  const cv = document.createElement('canvas');
-  cv.width = W; cv.height = H;
+  const W=1000, H=700;
+  const cv = document.createElement('canvas'); cv.width=W; cv.height=H;
   const ctx = cv.getContext('2d');
   const bg = ctx.createLinearGradient(0,0,W,H);
   bg.addColorStop(0,'#1a1506'); bg.addColorStop(.5,'#2a2208'); bg.addColorStop(1,'#1a1506');
-  ctx.fillStyle = bg; ctx.fillRect(0,0,W,H);
-  ctx.strokeStyle = '#C8A96E'; ctx.lineWidth = 3; ctx.strokeRect(15,15,W-30,H-30);
-  ctx.strokeStyle = 'rgba(200,169,110,.25)'; ctx.lineWidth = 1; ctx.strokeRect(28,28,W-56,H-56);
+  ctx.fillStyle=bg; ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle='#C8A96E'; ctx.lineWidth=3; ctx.strokeRect(15,15,W-30,H-30);
+  ctx.strokeStyle='rgba(200,169,110,.25)'; ctx.lineWidth=1; ctx.strokeRect(28,28,W-56,H-56);
   ctx.fillStyle='rgba(200,169,110,.35)'; ctx.font='28px serif'; ctx.textAlign='center';
   ctx.fillText('✦',46,66); ctx.fillText('✦',W-46,66); ctx.fillText('✦',46,H-36); ctx.fillText('✦',W-46,H-36);
   ctx.fillStyle='#C8A96E'; ctx.font='bold 14px sans-serif';
-  ctx.fillText((siteAppName||'LMS ACADEMY').toUpperCase(), W/2, 105);
+  ctx.fillText((siteAppName||'LMS ACADEMY').toUpperCase(),W/2,105);
   ctx.fillStyle='#f5e6c0'; ctx.font='bold 34px serif';
-  ctx.fillText('Certificate of Completion', W/2, 158);
-  ctx.fillStyle='rgba(245,230,192,.4)'; ctx.font='15px sans-serif';
-  ctx.fillText('এই সার্টিফিকেট প্রদান করা হচ্ছে', W/2, 205);
+  ctx.fillText('Certificate of Completion',W/2,158);
+  ctx.fillStyle='rgba(245,230,192,.4)'; ctx.font='14px sans-serif';
+  ctx.fillText('এই সার্টিফিকেট প্রদান করা হচ্ছে',W/2,205);
   ctx.fillStyle='#C8A96E'; ctx.font='bold 46px serif';
-  ctx.fillText(name, W/2, 278);
+  ctx.fillText(name,W/2,278);
   ctx.fillStyle='rgba(245,230,192,.38)'; ctx.font='14px sans-serif';
-  ctx.fillText('সফলভাবে সম্পন্ন করেছেন', W/2, 320);
-  ctx.fillStyle='#f5e6c0'; ctx.font='bold 24px sans-serif';
-  ctx.fillText(course.title, W/2, 368);
-  const dg = ctx.createLinearGradient(100,0,W-100,0);
+  ctx.fillText('সফলভাবে সম্পন্ন করেছেন',W/2,320);
+  ctx.fillStyle='#f5e6c0'; ctx.font='bold 22px sans-serif';
+  if (ctx.measureText(course.title).width>700) ctx.font='bold 17px sans-serif';
+  ctx.fillText(course.title,W/2,365);
+  const dg=ctx.createLinearGradient(100,0,W-100,0);
   dg.addColorStop(0,'transparent'); dg.addColorStop(.5,'rgba(200,169,110,.3)'); dg.addColorStop(1,'transparent');
   ctx.strokeStyle=dg; ctx.lineWidth=1;
-  ctx.beginPath(); ctx.moveTo(100,410); ctx.lineTo(W-100,410); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(100,408); ctx.lineTo(W-100,408); ctx.stroke();
   ctx.fillStyle='rgba(245,230,192,.3)'; ctx.font='11px sans-serif';
   ctx.fillText('INSTRUCTOR',200,448); ctx.fillText('DATE',W-200,448);
   ctx.fillStyle='rgba(245,230,192,.75)'; ctx.font='bold 14px sans-serif';
   ctx.fillText(course.instructor||'Admin',200,470); ctx.fillText(dateStr,W-200,470);
+  // signature or seal
+  if (certSignatureUrl) {
+    const sig = new Image(); sig.crossOrigin='anonymous'; sig.src=certSignatureUrl;
+    sig.onload = () => {
+      ctx.drawImage(sig,W/2-50,430,100,50);
+      ctx.font='11px monospace'; ctx.fillStyle='rgba(200,169,110,.4)';
+      ctx.fillText(certId,W/2,530);
+      const a=document.createElement('a'); a.href=cv.toDataURL('image/png');
+      a.download=`certificate-${certId}.png`; a.click();
+    };
+    return;
+  }
   ctx.font='11px monospace'; ctx.fillStyle='rgba(200,169,110,.4)';
-  ctx.fillText(certId, W/2, 530);
-  const a = document.createElement('a');
-  a.href = cv.toDataURL('image/png');
-  a.download = `certificate-${certId}.png`;
-  a.click();
+  ctx.fillText(certId,W/2,530);
+  const a=document.createElement('a'); a.href=cv.toDataURL('image/png');
+  a.download=`certificate-${certId}.png`; a.click();
 }
 
 /* ── Download PDF ────────────────────────── */
 async function downloadCertPdf(btn) {
   if (!activeCert) return;
-  btn.textContent = '⏳ তৈরি হচ্ছে...'; btn.disabled = true;
+  btn.textContent='⏳ তৈরি হচ্ছে...'; btn.disabled=true;
   try {
     const { jsPDF } = window.jspdf;
-    const doc = new jsPDF({ orientation:'landscape', unit:'mm', format:'a4' });
-    const W=297, H=210;
-    doc.setFillColor(26,21,6); doc.rect(0,0,W,H,'F');
-    doc.setDrawColor(200,169,110); doc.setLineWidth(.8); doc.rect(6,6,W-12,H-12);
-    doc.setDrawColor(200,169,110); doc.setLineWidth(.25); doc.rect(10,10,W-20,H-20);
-    doc.setTextColor(200,169,110); doc.setFontSize(10); doc.setFont('helvetica','bold');
-    doc.text((siteAppName||'LMS ACADEMY').toUpperCase(), W/2, 28, {align:'center'});
-    doc.setTextColor(245,230,192); doc.setFontSize(24); doc.setFont('helvetica','bold');
-    doc.text('Certificate of Completion', W/2, 48, {align:'center'});
-    doc.setTextColor(150,140,120); doc.setFontSize(10); doc.setFont('helvetica','normal');
-    doc.text('This is to certify that', W/2, 65, {align:'center'});
-    doc.setTextColor(200,169,110); doc.setFontSize(28); doc.setFont('helvetica','bold');
-    doc.text(activeCert.name, W/2, 86, {align:'center'});
-    doc.setTextColor(130,120,100); doc.setFontSize(10); doc.setFont('helvetica','normal');
-    doc.text('has successfully completed', W/2, 100, {align:'center'});
-    doc.setTextColor(245,230,192); doc.setFontSize(15); doc.setFont('helvetica','bold');
-    doc.text(activeCert.course.title, W/2, 115, {align:'center', maxWidth:200});
-    doc.setDrawColor(200,169,110); doc.setLineWidth(.25); doc.line(50,128,W-50,128);
-    doc.setTextColor(130,120,100); doc.setFontSize(8); doc.setFont('helvetica','normal');
-    doc.text('INSTRUCTOR',70,142,{align:'center'}); doc.text('DATE',W-70,142,{align:'center'});
-    doc.setTextColor(200,190,170); doc.setFontSize(10); doc.setFont('helvetica','bold');
-    doc.text(activeCert.course.instructor||'Admin',70,150,{align:'center'});
-    doc.text(activeCert.dateStr,W-70,150,{align:'center'});
-    doc.setTextColor(130,120,100); doc.setFontSize(7); doc.setFont('courier','normal');
-    doc.text(activeCert.certId, W/2, 168, {align:'center'});
+    const doc = new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
+    const W=297,H=210;
+    // frame background
+    if (certFrameUrl) {
+      doc.addImage(certFrameUrl,'PNG',0,0,W,H);
+    } else {
+      doc.setFillColor(26,21,6); doc.rect(0,0,W,H,'F');
+      doc.setDrawColor(200,169,110); doc.setLineWidth(.8); doc.rect(6,6,W-12,H-12);
+      doc.setDrawColor(200,169,110); doc.setLineWidth(.25); doc.rect(10,10,W-20,H-20);
+    }
+    const dark = !certFrameUrl;
+    doc.setTextColor(...(dark?[200,169,110]:[100,70,20])); doc.setFontSize(10); doc.setFont('helvetica','bold');
+    doc.text((siteAppName||'LMS ACADEMY').toUpperCase(),W/2,28,{align:'center'});
+    doc.setTextColor(...(dark?[245,230,192]:[30,20,5])); doc.setFontSize(24); doc.setFont('helvetica','bold');
+    doc.text('Certificate of Completion',W/2,46,{align:'center'});
+    doc.setTextColor(...(dark?[150,140,120]:[120,100,60])); doc.setFontSize(10); doc.setFont('helvetica','normal');
+    doc.text('This is to certify that',W/2,62,{align:'center'});
+    doc.setTextColor(...(dark?[200,169,110]:[120,80,10])); doc.setFontSize(28); doc.setFont('helvetica','bold');
+    doc.text(activeCert.name,W/2,82,{align:'center'});
+    doc.setTextColor(...(dark?[130,120,100]:[100,80,40])); doc.setFontSize(10); doc.setFont('helvetica','normal');
+    doc.text('has successfully completed',W/2,96,{align:'center'});
+    doc.setTextColor(...(dark?[245,230,192]:[20,15,5])); doc.setFontSize(15); doc.setFont('helvetica','bold');
+    doc.text(activeCert.course.title,W/2,112,{align:'center',maxWidth:200});
+    doc.setDrawColor(...(dark?[200,169,110]:[150,120,60])); doc.setLineWidth(.25); doc.line(50,126,W-50,126);
+    doc.setTextColor(...(dark?[130,120,100]:[100,80,40])); doc.setFontSize(8); doc.setFont('helvetica','normal');
+    doc.text('INSTRUCTOR',70,140,{align:'center'}); doc.text('DATE',W-70,140,{align:'center'});
+    doc.setTextColor(...(dark?[200,190,170]:[30,20,5])); doc.setFontSize(10); doc.setFont('helvetica','bold');
+    doc.text(activeCert.course.instructor||'Admin',70,148,{align:'center'});
+    doc.text(activeCert.dateStr,W-70,148,{align:'center'});
+    // signature
+    if (certSignatureUrl) {
+      try { doc.addImage(certSignatureUrl,'PNG',W/2-20,130,40,20); } catch(e){}
+    }
+    doc.setTextColor(...(dark?[130,120,100]:[100,80,40])); doc.setFontSize(7); doc.setFont('courier','normal');
+    doc.text(activeCert.certId,W/2,168,{align:'center'});
     doc.save(`certificate-${activeCert.certId}.pdf`);
   } catch(e) {
-    console.error(e);
-    alert('PDF তৈরিতে সমস্যা। PNG ডাউনলোড করুন।');
+    console.error(e); alert('PDF তৈরিতে সমস্যা। PNG ডাউনলোড করুন।');
   }
-  btn.textContent = '📄 PDF'; btn.disabled = false;
+  btn.textContent='📄 PDF'; btn.disabled=false;
 }
 
 function openVerifyPage() {
   if (!activeCert) return;
-  window.open(`certificate.html?id=${activeCert.certId}`, '_blank');
+  window.open(`certificate.html?id=${activeCert.certId}`,'_blank');
 }
 
 /* ── Load User Ratings ───────────────────── */

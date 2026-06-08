@@ -1102,6 +1102,38 @@ tbody tr:hover td { background: rgba(255,255,255,.02); }
         <button class="btn btn-ghost btn-sm" style="margin-top:.5rem" onclick="addPayMethodField()">+ Method যোগ করুন</button>
       </div>
 
+      <!-- Certificate Settings -->
+      <div class="settings-card">
+        <h3>🎓 Certificate Settings</h3>
+        <p>Certificate এ দেখানো signature ও frame/background</p>
+
+        <div class="fg">
+          <label>Signature Image URL</label>
+          <input id="sCertSignature" placeholder="https://... (PNG, transparent background)"
+            oninput="previewCertImg('sCertSignature','sCertSignatureImg','sCertSignaturePreview')"/>
+          <div class="fg-hint">Instructor বা Director এর signature — transparent PNG হলে ভালো দেখাবে।</div>
+        </div>
+
+        <div id="sCertSignaturePreview" style="display:none; margin:.5rem 0 1rem">
+          <div style="font-size:.72rem;color:var(--muted);margin-bottom:.4rem">Preview:</div>
+          <div style="background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:8px;padding:.8rem;display:inline-block">
+            <img id="sCertSignatureImg" src="" style="max-height:60px;max-width:200px;object-fit:contain" alt="signature"/>
+          </div>
+        </div>
+
+        <div class="fg">
+          <label>Certificate Frame/Background URL</label>
+          <input id="sCertFrame" placeholder="https://... (PNG বা JPG, A4 landscape ratio)"
+            oninput="previewCertImg('sCertFrame','sCertFrameImg','sCertFramePreview')"/>
+          <div class="fg-hint">A4 landscape (1122×794px) সাইজের ছবি দিলে সবচেয়ে ভালো হবে। এর উপরে text বসবে।</div>
+        </div>
+
+        <div id="sCertFramePreview" style="display:none; margin:.5rem 0 0">
+          <div style="font-size:.72rem;color:var(--muted);margin-bottom:.4rem">Preview:</div>
+          <img id="sCertFrameImg" src="" style="width:100%;max-width:360px;border-radius:8px;border:1px solid var(--border)" alt="frame"/>
+        </div>
+      </div>
+
     </div>
     <div class="msg" id="settingsMsg" style="margin-top:1rem"></div>
   </div>
@@ -1191,6 +1223,14 @@ tbody tr:hover td { background: rgba(255,255,255,.02); }
       <label>কোর্স ফি (৳) — 0 দিলে Free</label>
       <input type="number" id="cPrice" placeholder="0" min="0" value="0"/>
       <div class="fg-hint">0 = বিনামূল্যে। অন্যথায় টাকার পরিমাণ লিখুন।</div>
+    </div>
+    <div class="fg">
+      <label>🎓 সার্টিফিকেট</label>
+      <select id="cCertificate">
+        <option value="false">❌ না — এই কোর্সে সার্টিফিকেট নেই</option>
+        <option value="true">✅ হ্যাঁ — সম্পন্ন করলে সার্টিফিকেট পাবে</option>
+      </select>
+      <div class="fg-hint">চালু থাকলে student ১০০% complete করলে সার্টিফিকেট button দেখাবে।</div>
     </div>
     <div class="edit-lesson-settings" id="editLessonSettings" style="display:none">
       <h4>📹 লেসন সেটিংস — Quiz বাধ্যতামূলক/ঐচ্ছিক</h4>
@@ -1339,6 +1379,18 @@ async function loadSettings() {
     /* payment methods */
     payMethodFields = s.paymentMethods || [];
     renderPayMethodFields();
+
+    // certificate settings
+    if (s.certSignatureUrl) {
+      document.getElementById('sCertSignature').value = s.certSignatureUrl;
+      document.getElementById('sCertSignatureImg').src = s.certSignatureUrl;
+      document.getElementById('sCertSignaturePreview').style.display = 'block';
+    }
+    if (s.certFrameUrl) {
+      document.getElementById('sCertFrame').value = s.certFrameUrl;
+      document.getElementById('sCertFrameImg').src = s.certFrameUrl;
+      document.getElementById('sCertFramePreview').style.display = 'block';
+    }
   } catch(e) { console.warn('settings load:', e); }
 }
 
@@ -1452,7 +1504,10 @@ function renderCoursesTable() {
             <span class="avg-count">(${c.totalRatings||0})</span>
           </div>` : `<span style="color:var(--muted);font-size:.75rem">—</span>`}
       </td>
-      <td data-label="স্ট্যাটাস"><span class="badge ${c.published?'badge-green':'badge-gray'}">${c.published?'Published':'Draft'}</span></td>
+      <td data-label="স্ট্যাটাস">
+        <span class="badge ${c.published?'badge-green':'badge-gray'}">${c.published?'Published':'Draft'}</span>
+        ${c.certificate ? `<span class="badge badge-amber" style="margin-left:.3rem">🎓 Cert</span>` : ''}
+      </td>
       <td data-label="Action">
         <div class="course-row-actions">
           <button class="btn btn-ghost btn-sm" onclick="openEditCourse('${c.id}')">✏️ Edit</button>
@@ -1655,8 +1710,10 @@ async function saveSettings() {
     heroDesc:      g('sHeroDesc'),
     heroCta:       g('sHeroCta'),
     stats:         statsFields.filter(s => s.value && s.label),
-    paymentMethods: payMethodFields.filter(m => m.name && m.number),
-    updatedAt:     firebase.firestore.FieldValue.serverTimestamp()
+    paymentMethods:  payMethodFields.filter(m => m.name && m.number),
+    certSignatureUrl: document.getElementById('sCertSignature').value.trim(),
+    certFrameUrl:     document.getElementById('sCertFrame').value.trim(),
+    updatedAt:        firebase.firestore.FieldValue.serverTimestamp()
   };
   const msg = document.getElementById('settingsMsg');
   try {
@@ -1698,6 +1755,7 @@ function openEditCourse(id) {
   document.getElementById('cInstructor').value = c.instructor  || '';
   document.getElementById('cPublished').value  = c.published ? 'true' : 'false';
   document.getElementById('cPrice').value      = c.price || 0;
+  document.getElementById('cCertificate').value = c.certificate ? 'true' : 'false';
 
   /* load existing thumbnail */
   resetThumbnailForm();
@@ -1918,6 +1976,7 @@ async function saveCourse() {
       thumbnailId:  document.getElementById('cThumbnailPublicId').value.trim(),
       published:    document.getElementById('cPublished').value === 'true',
       price:        parseFloat(document.getElementById('cPrice').value) || 0,
+      certificate:  document.getElementById('cCertificate').value === 'true',
       totalLessons: 0,
       createdAt:    firebase.firestore.FieldValue.serverTimestamp()
     });
@@ -1925,7 +1984,8 @@ async function saveCourse() {
     closeModal('addCourse');
     document.getElementById('editCourseId').value = '';
     ['cTitle','cDesc','cCat','cInstructor'].forEach(id => document.getElementById(id).value = '');
-    document.getElementById('cPublished').value = 'true';
+    document.getElementById('cPublished').value   = 'true';
+    document.getElementById('cCertificate').value = 'false';
     document.getElementById('editLessonSettings').style.display = 'none';
     resetThumbnailForm();
     await loadAll();
@@ -1950,6 +2010,7 @@ async function updateCourse(courseId) {
       thumbnailId:  document.getElementById('cThumbnailPublicId').value.trim(),
       published:    document.getElementById('cPublished').value === 'true',
       price:        parseFloat(document.getElementById('cPrice').value) || 0,
+      certificate:  document.getElementById('cCertificate').value === 'true',
     });
 
     const toggles = document.querySelectorAll('#editLessonTogglesList .toggle-switch-input:not([disabled])');
@@ -2454,6 +2515,20 @@ async function revokeCert(certId, userName) {
     await loadAll();
   } catch(e) {
     toast('❌ সমস্যা হয়েছে: ' + e.message, 'err');
+  }
+}
+
+/* ── Certificate Image Preview ────────── */
+function previewCertImg(inputId, imgId, previewId) {
+  const url = document.getElementById(inputId).value.trim();
+  const img  = document.getElementById(imgId);
+  const wrap = document.getElementById(previewId);
+  if (url) {
+    img.src = url;
+    img.onload  = () => wrap.style.display = 'block';
+    img.onerror = () => wrap.style.display = 'none';
+  } else {
+    wrap.style.display = 'none';
   }
 }
 
