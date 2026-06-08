@@ -1226,11 +1226,22 @@ tbody tr:hover td { background: rgba(255,255,255,.02); }
     </div>
     <div class="fg">
       <label>🎓 সার্টিফিকেট</label>
-      <select id="cCertificate">
+      <select id="cCertificate" onchange="toggleSignatureField()">
         <option value="false">❌ না — এই কোর্সে সার্টিফিকেট নেই</option>
         <option value="true">✅ হ্যাঁ — সম্পন্ন করলে সার্টিফিকেট পাবে</option>
       </select>
       <div class="fg-hint">চালু থাকলে student ১০০% complete করলে সার্টিফিকেট button দেখাবে।</div>
+    </div>
+    <div class="fg" id="signatureFieldWrap" style="display:none">
+      <label>✍️ Signature Image URL (এই কোর্সের জন্য)</label>
+      <input id="cSignatureUrl" placeholder="https://... (transparent PNG)"
+        oninput="previewCertImg('cSignatureUrl','cSignatureImg','cSignaturePreview')"/>
+      <div class="fg-hint">খালি রাখলে Settings এর default signature নেবে।</div>
+      <div id="cSignaturePreview" style="display:none;margin-top:.5rem">
+        <div style="background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:8px;padding:.6rem;display:inline-block">
+          <img id="cSignatureImg" src="" style="max-height:50px;max-width:180px;object-fit:contain" alt="sig"/>
+        </div>
+      </div>
     </div>
     <div class="edit-lesson-settings" id="editLessonSettings" style="display:none">
       <h4>📹 লেসন সেটিংস — Quiz বাধ্যতামূলক/ঐচ্ছিক</h4>
@@ -1756,6 +1767,14 @@ function openEditCourse(id) {
   document.getElementById('cPublished').value  = c.published ? 'true' : 'false';
   document.getElementById('cPrice').value      = c.price || 0;
   document.getElementById('cCertificate').value = c.certificate ? 'true' : 'false';
+  document.getElementById('cSignatureUrl').value = c.signatureUrl || '';
+  document.getElementById('signatureFieldWrap').style.display = c.certificate ? 'block' : 'none';
+  if (c.signatureUrl) {
+    document.getElementById('cSignatureImg').src = c.signatureUrl;
+    document.getElementById('cSignaturePreview').style.display = 'block';
+  } else {
+    document.getElementById('cSignaturePreview').style.display = 'none';
+  }
 
   /* load existing thumbnail */
   resetThumbnailForm();
@@ -1977,6 +1996,7 @@ async function saveCourse() {
       published:    document.getElementById('cPublished').value === 'true',
       price:        parseFloat(document.getElementById('cPrice').value) || 0,
       certificate:  document.getElementById('cCertificate').value === 'true',
+      signatureUrl: document.getElementById('cSignatureUrl').value.trim(),
       totalLessons: 0,
       createdAt:    firebase.firestore.FieldValue.serverTimestamp()
     });
@@ -1986,6 +2006,9 @@ async function saveCourse() {
     ['cTitle','cDesc','cCat','cInstructor'].forEach(id => document.getElementById(id).value = '');
     document.getElementById('cPublished').value   = 'true';
     document.getElementById('cCertificate').value = 'false';
+    document.getElementById('cSignatureUrl').value = '';
+    document.getElementById('cSignaturePreview').style.display = 'none';
+    document.getElementById('signatureFieldWrap').style.display = 'none';
     document.getElementById('editLessonSettings').style.display = 'none';
     resetThumbnailForm();
     await loadAll();
@@ -2011,6 +2034,7 @@ async function updateCourse(courseId) {
       published:    document.getElementById('cPublished').value === 'true',
       price:        parseFloat(document.getElementById('cPrice').value) || 0,
       certificate:  document.getElementById('cCertificate').value === 'true',
+      signatureUrl: document.getElementById('cSignatureUrl').value.trim(),
     });
 
     const toggles = document.querySelectorAll('#editLessonTogglesList .toggle-switch-input:not([disabled])');
@@ -2530,6 +2554,11 @@ function previewCertImg(inputId, imgId, previewId) {
   } else {
     wrap.style.display = 'none';
   }
+}
+
+function toggleSignatureField() {
+  const val  = document.getElementById('cCertificate').value;
+  document.getElementById('signatureFieldWrap').style.display = val === 'true' ? 'block' : 'none';
 }
 
 /* ── Make Admin ────────────────────────── */

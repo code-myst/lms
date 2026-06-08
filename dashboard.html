@@ -503,9 +503,8 @@ img { display: block; }
 .btn-cert-dl { padding:.7rem; border:none; border-radius:10px; font-size:.85rem; font-weight:700; font-family:var(--font); cursor:pointer; transition:filter .2s,transform .15s; display:flex; align-items:center; justify-content:center; gap:.4rem; }
 .btn-cert-dl:hover { filter:brightness(1.1); transform:translateY(-1px); }
 .btn-cert-dl:disabled { opacity:.5; cursor:not-allowed; transform:none; }
-.btn-dl-img { background:linear-gradient(135deg,#C8A96E,#e6c87a); color:#0D0F14; }
-.btn-dl-pdf { background:rgba(200,169,110,.12); color:#C8A96E; border:1px solid rgba(200,169,110,.2); }
-.btn-dl-verify { grid-column:1/-1; background:rgba(67,97,238,.12); color:var(--primary); border:1px solid rgba(67,97,238,.2); }
+.btn-dl-pdf    { background:linear-gradient(135deg,#C8A96E,#e6c87a); color:#0D0F14; }
+.btn-dl-verify { background:rgba(67,97,238,.12); color:var(--primary); border:1px solid rgba(67,97,238,.2); }
 .notice-list { display: flex; flex-direction: column; gap: .8rem; }
 .notice-item {
   background: var(--card); border: 1px solid var(--border);
@@ -1151,15 +1150,16 @@ img { display: block; }
         <div class="cp-divider"></div>
         <div class="cp-meta">
           <div class="cp-meta-col">
-            <div class="cp-meta-label">Instructor</div>
-            <div class="cp-meta-val" id="cpInstructor">—</div>
+            <div class="cp-meta-label">Issue Date</div>
+            <div class="cp-meta-val" id="cpDate">—</div>
           </div>
           <div class="cp-meta-col" id="cpSealWrap">
             <div class="cp-seal">🎓</div>
           </div>
           <div class="cp-meta-col">
-            <div class="cp-meta-label">Issue Date</div>
-            <div class="cp-meta-val" id="cpDate">—</div>
+            <div id="cpSignatureWrap" style="min-height:44px;display:flex;align-items:flex-end;justify-content:center;margin-bottom:.2rem"></div>
+            <div class="cp-meta-val" id="cpInstructor">—</div>
+            <div class="cp-meta-label">Instructor</div>
           </div>
         </div>
         <div class="cp-id" id="cpId">CERT-———</div>
@@ -1167,8 +1167,7 @@ img { display: block; }
     </div>
 
     <div class="cert-actions">
-      <button class="btn-cert-dl btn-dl-img"    onclick="downloadCertImg(this)">🖼 Image (PNG)</button>
-      <button class="btn-cert-dl btn-dl-pdf"    onclick="downloadCertPdf(this)">📄 PDF</button>
+      <button class="btn-cert-dl btn-dl-pdf"    onclick="downloadCertPdf(this)">📄 PDF Download</button>
       <button class="btn-cert-dl btn-dl-verify" onclick="openVerifyPage()">🔗 Verification Link</button>
     </div>
   </div>
@@ -1604,11 +1603,15 @@ async function openCertModal(courseId) {
     preview.className = 'cert-preview no-frame';
   }
 
-  // signature
+  // signature — per-course first, fallback to global
+  const sigUrl = course.signatureUrl || certSignatureUrl || '';
+  const sigWrap  = document.getElementById('cpSignatureWrap');
   const sealWrap = document.getElementById('cpSealWrap');
-  if (certSignatureUrl) {
-    sealWrap.innerHTML = `<img class="cp-signature" src="${certSignatureUrl}" alt="signature" crossorigin="anonymous"/>`;
+  if (sigUrl) {
+    sigWrap.innerHTML = `<img class="cp-signature" src="${sigUrl}" alt="signature" crossorigin="anonymous" style="max-height:40px;max-width:110px;object-fit:contain;display:block;margin:0 auto"/>`;
+    sealWrap.innerHTML = `<div class="cp-seal">🎓</div>`;
   } else {
+    sigWrap.innerHTML = '';
     sealWrap.innerHTML = `<div class="cp-seal">🎓</div>`;
   }
 
@@ -1652,7 +1655,7 @@ async function openCertModal(courseId) {
     document.getElementById('cpLogoLetter').textContent = (siteAppName||'L')[0].toUpperCase();
   }
 
-  activeCert = { certId, name, course, dateStr, issuedAt };
+  activeCert = { certId, name, course, dateStr, issuedAt, sigUrl: course.signatureUrl || certSignatureUrl || '' };
 }
 
 function closeCertModal(event, force) {
@@ -1766,14 +1769,18 @@ async function downloadCertPdf(btn) {
     doc.text(activeCert.course.title,W/2,112,{align:'center',maxWidth:200});
     doc.setDrawColor(...(dark?[200,169,110]:[150,120,60])); doc.setLineWidth(.25); doc.line(50,126,W-50,126);
     doc.setTextColor(...(dark?[130,120,100]:[100,80,40])); doc.setFontSize(8); doc.setFont('helvetica','normal');
-    doc.text('INSTRUCTOR',70,140,{align:'center'}); doc.text('DATE',W-70,140,{align:'center'});
+    doc.text('DATE',70,140,{align:'center'});
     doc.setTextColor(...(dark?[200,190,170]:[30,20,5])); doc.setFontSize(10); doc.setFont('helvetica','bold');
-    doc.text(activeCert.course.instructor||'Admin',70,148,{align:'center'});
-    doc.text(activeCert.dateStr,W-70,148,{align:'center'});
-    // signature
-    if (certSignatureUrl) {
-      try { doc.addImage(certSignatureUrl,'PNG',W/2-20,130,40,20); } catch(e){}
+    doc.text(activeCert.dateStr,70,150,{align:'center'});
+    // signature + instructor
+    const sigUrl = activeCert.sigUrl;
+    if (sigUrl) {
+      try { doc.addImage(sigUrl,'PNG',W-90,128,40,18,undefined,'FAST'); } catch(e){}
     }
+    doc.setTextColor(...(dark?[200,190,170]:[30,20,5])); doc.setFontSize(10); doc.setFont('helvetica','bold');
+    doc.text(activeCert.course.instructor||'Admin',W-70,152,{align:'center'});
+    doc.setTextColor(...(dark?[130,120,100]:[100,80,40])); doc.setFontSize(8); doc.setFont('helvetica','normal');
+    doc.text('Instructor',W-70,159,{align:'center'});
     doc.setTextColor(...(dark?[130,120,100]:[100,80,40])); doc.setFontSize(7); doc.setFont('courier','normal');
     doc.text(activeCert.certId,W/2,168,{align:'center'});
     doc.save(`certificate-${activeCert.certId}.pdf`);
